@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Coding Interview Patterns - Study Notes</title>
+<script>if(localStorage.getItem('theme')==='dark')document.documentElement.classList.add('dark');</script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --bg:#f5f5f5;--text:#333;--card-bg:#fff;--card-shadow:rgba(0,0,0,0.06);--card-hover:rgba(0,0,0,0.1);--muted:#999;--cat-text:#1a1a2e;--border:#e8e8e8;--search-bg:rgba(255,255,255,0.15);--accent:#3b82f6; }
+html.dark { --bg:#121212;--text:#e0e0e0;--card-bg:#1e1e2e;--card-shadow:rgba(0,0,0,0.3);--card-hover:rgba(0,0,0,0.5);--muted:#777;--cat-text:#ccc;--border:#2a2a3a;--search-bg:rgba(255,255,255,0.1); }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--text); transition:background .3s,color .3s; }
+.idx-header { background:#1a1a2e; color:#fff; padding:48px 24px 40px; text-align:center; position:relative; }
+.idx-header h1 { font-size:2em; font-weight:800; margin-bottom:8px; }
+.idx-header p { font-size:1.05em; color:rgba(255,255,255,0.7); }
+.theme-toggle { position:absolute;top:16px;right:20px;background:rgba(255,255,255,0.12);border:none;color:#fff;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:background .2s; }
+.theme-toggle:hover { background:rgba(255,255,255,0.22); }
+.idx-search { max-width:400px;margin:20px auto 0;position:relative; }
+.idx-search input { width:100%;padding:10px 16px 10px 38px;border:none;border-radius:8px;background:var(--search-bg);color:#fff;font-size:14px;outline:none;font-family:inherit; }
+.idx-search input::placeholder { color:rgba(255,255,255,0.45); }
+.idx-search-icon { position:absolute;left:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.4);font-size:14px;pointer-events:none; }
+.idx-crumb { max-width:1000px;margin:0 auto;padding:14px 24px 0;font-size:13px;color:var(--muted); }
+.idx-crumb a { color:var(--accent);text-decoration:none; }
+.idx-crumb a:hover { text-decoration:underline; }
+.idx-crumb span { margin:0 6px;opacity:0.5; }
+.idx-main { max-width:1000px; margin:0 auto; padding:24px; }
+.idx-cat { font-size:1.15em;font-weight:700;color:var(--cat-text);margin:32px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--accent); }
+.idx-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:14px; }
+.idx-card { display:flex;align-items:center;gap:14px;background:var(--card-bg);border-radius:10px;padding:16px 18px;text-decoration:none;color:var(--text);box-shadow:0 1px 4px var(--card-shadow);transition:box-shadow .2s,transform .2s,background .3s; }
+.idx-card:hover { box-shadow:0 4px 16px var(--card-hover);transform:translateY(-2px); }
+.idx-ch { flex-shrink:0;width:36px;height:36px;border-radius:50%;background:#1a1a2e;color:var(--accent);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center; }
+.idx-title { font-size:14px;font-weight:600;line-height:1.35; }
+.idx-footer { text-align:center;padding:24px;color:var(--muted);font-size:13px;margin-top:32px;border-top:1px solid var(--border);transition:border-color .3s; }
+.idx-no-results { display:none;text-align:center;padding:24px;color:var(--muted);font-size:14px; }
+.fab-group { position:fixed;bottom:28px;right:28px;display:flex;flex-direction:column;gap:12px;z-index:1000; }
+.fab { width:44px;height:44px;border-radius:50%;border:none;background:#1a1a2e;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,0.25);transition:transform .2s;text-decoration:none; }
+.fab:hover { transform:scale(1.1); }
+.fab.scroll-top { opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s; }
+.fab.scroll-top.visible { opacity:1;visibility:visible; }
+@media screen and (max-width:768px) { .idx-grid{grid-template-columns:repeat(2,1fr);gap:10px;} .idx-header{padding:32px 16px 28px;} .idx-header h1{font-size:1.5em;} .idx-main{padding:16px;} .idx-crumb{padding:10px 16px 0;} .theme-toggle{top:12px;right:12px;width:36px;height:36px;font-size:16px;} }
+@media screen and (max-width:480px) { .idx-grid{grid-template-columns:1fr;} .idx-card{padding:14px;} }
+</style>
+</head>
+<body>
+<div class="idx-header">
+    <button class="theme-toggle" id="themeToggle" title="Toggle dark mode">&#9790;</button>
+    <h1>Coding Interview Patterns</h1>
+    <p>120 problems across 18 pattern categories</p>
+    <div class="idx-search"><span class="idx-search-icon">&#128269;</span><input type="text" id="idxSearch" placeholder="Filter problems..." autocomplete="off"></div>
+</div>
+<div class="idx-crumb"><a href="../index.html">Home</a><span>&#8250;</span>Coding Patterns</div>
+<main class="idx-main" id="idxMain">
+
+<h2 class="idx-cat">Two Pointers</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/00-introduction-to-two-pointers.html" class="idx-card"><span class="idx-ch">1</span><span class="idx-title">Introduction to Two Pointers</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/01-pair-sum---sorted.html" class="idx-card"><span class="idx-ch">2</span><span class="idx-title">Pair Sum - Sorted</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/02-triplet-sum.html" class="idx-card"><span class="idx-ch">3</span><span class="idx-title">Triplet Sum</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/03-is-palindrome-valid.html" class="idx-card"><span class="idx-ch">4</span><span class="idx-title">Is Palindrome Valid</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/04-largest-container.html" class="idx-card"><span class="idx-ch">5</span><span class="idx-title">Largest Container</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/05-shift-zeros-to-the-end.html" class="idx-card"><span class="idx-ch">6</span><span class="idx-title">Shift Zeros to the End</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/06-next-lexicographical-sequence.html" class="idx-card"><span class="idx-ch">7</span><span class="idx-title">Next Lexicographical Sequence</span></a>
+</div>
+
+<h2 class="idx-cat">Hash Maps & Sets</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/07-introduction-to-hash-maps-and-sets.html" class="idx-card"><span class="idx-ch">8</span><span class="idx-title">Introduction to Hash Maps and Sets</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/08-pair-sum---unsorted.html" class="idx-card"><span class="idx-ch">9</span><span class="idx-title">Pair Sum - Unsorted</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/09-verify-sudoku-board.html" class="idx-card"><span class="idx-ch">10</span><span class="idx-title">Verify Sudoku Board</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/10-zero-striping.html" class="idx-card"><span class="idx-ch">11</span><span class="idx-title">Zero Striping</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/11-longest-chain-of-consecutive-numbers.html" class="idx-card"><span class="idx-ch">12</span><span class="idx-title">Longest Chain of Consecutive Numbers</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/12-geometric-sequence-triplets.html" class="idx-card"><span class="idx-ch">13</span><span class="idx-title">Geometric Sequence Triplets</span></a>
+</div>
+
+<h2 class="idx-cat">Linked Lists</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/13-introduction-to-linked-lists.html" class="idx-card"><span class="idx-ch">14</span><span class="idx-title">Introduction to Linked Lists</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/14-linked-list-reversal.html" class="idx-card"><span class="idx-ch">15</span><span class="idx-title">Linked List Reversal</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/15-remove-the-kth-last-node-from-a-linked-list.html" class="idx-card"><span class="idx-ch">16</span><span class="idx-title">Remove the Kth Last Node</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/16-linked-list-intersection.html" class="idx-card"><span class="idx-ch">17</span><span class="idx-title">Linked List Intersection</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/17-lru-cache.html" class="idx-card"><span class="idx-ch">18</span><span class="idx-title">LRU Cache</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/18-palindromic-linked-list.html" class="idx-card"><span class="idx-ch">19</span><span class="idx-title">Palindromic Linked List</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/19-flatten-a-multi-level-linked-list.html" class="idx-card"><span class="idx-ch">20</span><span class="idx-title">Flatten a Multi-Level Linked List</span></a>
+</div>
+
+<h2 class="idx-cat">Fast & Slow Pointers</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/20-introduction-to-fast-and-slow-pointers.html" class="idx-card"><span class="idx-ch">21</span><span class="idx-title">Introduction to Fast and Slow Pointers</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/21-linked-list-loop.html" class="idx-card"><span class="idx-ch">22</span><span class="idx-title">Linked List Loop</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/22-linked-list-midpoint.html" class="idx-card"><span class="idx-ch">23</span><span class="idx-title">Linked List Midpoint</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/23-happy-number.html" class="idx-card"><span class="idx-ch">24</span><span class="idx-title">Happy Number</span></a>
+</div>
+
+<h2 class="idx-cat">Sliding Windows</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/24-introduction-to-sliding-windows.html" class="idx-card"><span class="idx-ch">25</span><span class="idx-title">Introduction to Sliding Windows</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/25-substring-anagrams.html" class="idx-card"><span class="idx-ch">26</span><span class="idx-title">Substring Anagrams</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/26-longest-substring-with-unique-characters.html" class="idx-card"><span class="idx-ch">27</span><span class="idx-title">Longest Substring With Unique Characters</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/27-longest-uniform-substring-after-replacements.html" class="idx-card"><span class="idx-ch">28</span><span class="idx-title">Longest Uniform Substring After Replacements</span></a>
+</div>
+
+<h2 class="idx-cat">Binary Search</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/28-introduction-to-binary-search.html" class="idx-card"><span class="idx-ch">29</span><span class="idx-title">Introduction to Binary Search</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/29-find-the-insertion-index.html" class="idx-card"><span class="idx-ch">30</span><span class="idx-title">Find the Insertion Index</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/30-first-and-last-occurrences-of-a-number.html" class="idx-card"><span class="idx-ch">31</span><span class="idx-title">First and Last Occurrences of a Number</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/31-cutting-wood.html" class="idx-card"><span class="idx-ch">32</span><span class="idx-title">Cutting Wood</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/32-find-the-target-in-a-rotated-sorted-array.html" class="idx-card"><span class="idx-ch">33</span><span class="idx-title">Find Target in Rotated Sorted Array</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/33-find-the-median-from-two-sorted-arrays.html" class="idx-card"><span class="idx-ch">34</span><span class="idx-title">Find Median From Two Sorted Arrays</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/34-matrix-search.html" class="idx-card"><span class="idx-ch">35</span><span class="idx-title">Matrix Search</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/35-local-maxima-in-array.html" class="idx-card"><span class="idx-ch">36</span><span class="idx-title">Local Maxima in Array</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/36-weighted-random-selection.html" class="idx-card"><span class="idx-ch">37</span><span class="idx-title">Weighted Random Selection</span></a>
+</div>
+
+<h2 class="idx-cat">Stacks</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/37-introduction-to-stacks.html" class="idx-card"><span class="idx-ch">38</span><span class="idx-title">Introduction to Stacks</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/38-valid-parenthesis-expression.html" class="idx-card"><span class="idx-ch">39</span><span class="idx-title">Valid Parenthesis Expression</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/39-next-largest-number-to-the-right.html" class="idx-card"><span class="idx-ch">40</span><span class="idx-title">Next Largest Number to the Right</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/40-evaluate-expression.html" class="idx-card"><span class="idx-ch">41</span><span class="idx-title">Evaluate Expression</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/41-repeated-removal-of-adjacent-duplicates.html" class="idx-card"><span class="idx-ch">42</span><span class="idx-title">Repeated Removal of Adjacent Duplicates</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/42-implement-a-queue-using-stacks.html" class="idx-card"><span class="idx-ch">43</span><span class="idx-title">Implement a Queue using Stacks</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/43-maximums-of-sliding-window.html" class="idx-card"><span class="idx-ch">44</span><span class="idx-title">Maximums of Sliding Window</span></a>
+</div>
+
+<h2 class="idx-cat">Heaps</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/44-introduction-to-heaps.html" class="idx-card"><span class="idx-ch">45</span><span class="idx-title">Introduction to Heaps</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/45-k-most-frequent-strings.html" class="idx-card"><span class="idx-ch">46</span><span class="idx-title">K Most Frequent Strings</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/46-combine-sorted-linked-lists.html" class="idx-card"><span class="idx-ch">47</span><span class="idx-title">Combine Sorted Linked Lists</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/47-median-of-an-integer-stream.html" class="idx-card"><span class="idx-ch">48</span><span class="idx-title">Median of an Integer Stream</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/48-sort-a-k-sorted-array.html" class="idx-card"><span class="idx-ch">49</span><span class="idx-title">Sort a K-Sorted Array</span></a>
+</div>
+
+<h2 class="idx-cat">Intervals</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/49-introduction-to-intervals.html" class="idx-card"><span class="idx-ch">50</span><span class="idx-title">Introduction to Intervals</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/50-merge-overlapping-intervals.html" class="idx-card"><span class="idx-ch">51</span><span class="idx-title">Merge Overlapping Intervals</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/51-identify-all-interval-overlaps.html" class="idx-card"><span class="idx-ch">52</span><span class="idx-title">Identify All Interval Overlaps</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/52-largest-overlap-of-intervals.html" class="idx-card"><span class="idx-ch">53</span><span class="idx-title">Largest Overlap of Intervals</span></a>
+</div>
+
+<h2 class="idx-cat">Prefix Sums</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/53-introduction-to-prefix-sums.html" class="idx-card"><span class="idx-ch">54</span><span class="idx-title">Introduction to Prefix Sums</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/54-sum-between-range.html" class="idx-card"><span class="idx-ch">55</span><span class="idx-title">Sum Between Range</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/55-k-sum-subarrays.html" class="idx-card"><span class="idx-ch">56</span><span class="idx-title">K-Sum Subarrays</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/56-product-array-without-current-element.html" class="idx-card"><span class="idx-ch">57</span><span class="idx-title">Product Array Without Current Element</span></a>
+</div>
+
+<h2 class="idx-cat">Trees</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/57-introduction-to-trees.html" class="idx-card"><span class="idx-ch">58</span><span class="idx-title">Introduction to Trees</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/58-invert-binary-tree.html" class="idx-card"><span class="idx-ch">59</span><span class="idx-title">Invert Binary Tree</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/59-balanced-binary-tree-validation.html" class="idx-card"><span class="idx-ch">60</span><span class="idx-title">Balanced Binary Tree Validation</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/60-rightmost-nodes-of-a-binary-tree.html" class="idx-card"><span class="idx-ch">61</span><span class="idx-title">Rightmost Nodes of a Binary Tree</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/61-widest-binary-tree-level.html" class="idx-card"><span class="idx-ch">62</span><span class="idx-title">Widest Binary Tree Level</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/62-binary-search-tree-validation.html" class="idx-card"><span class="idx-ch">63</span><span class="idx-title">Binary Search Tree Validation</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/63-lowest-common-ancestor.html" class="idx-card"><span class="idx-ch">64</span><span class="idx-title">Lowest Common Ancestor</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/64-build-binary-tree-from-preorder-and-inorder-traversals.html" class="idx-card"><span class="idx-ch">65</span><span class="idx-title">Build Binary Tree From Preorder and Inorder</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/65-maximum-sum-of-a-continuous-path-in-a-binary-tree.html" class="idx-card"><span class="idx-ch">66</span><span class="idx-title">Maximum Sum of a Continuous Path</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/66-binary-tree-symmetry.html" class="idx-card"><span class="idx-ch">67</span><span class="idx-title">Binary Tree Symmetry</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/67-binary-tree-columns.html" class="idx-card"><span class="idx-ch">68</span><span class="idx-title">Binary Tree Columns</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/68-kth-smallest-number-in-a-binary-search-tree.html" class="idx-card"><span class="idx-ch">69</span><span class="idx-title">Kth Smallest Number in a BST</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/69-serialize-and-deserialize-a-binary-tree.html" class="idx-card"><span class="idx-ch">70</span><span class="idx-title">Serialize and Deserialize a Binary Tree</span></a>
+</div>
+
+<h2 class="idx-cat">Tries</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/70-introduction-to-tries.html" class="idx-card"><span class="idx-ch">71</span><span class="idx-title">Introduction to Tries</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/71-design-a-trie.html" class="idx-card"><span class="idx-ch">72</span><span class="idx-title">Design a Trie</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/72-insert-and-search-words-with-wildcards.html" class="idx-card"><span class="idx-ch">73</span><span class="idx-title">Insert and Search Words with Wildcards</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/73-find-all-words-on-a-board.html" class="idx-card"><span class="idx-ch">74</span><span class="idx-title">Find All Words on a Board</span></a>
+</div>
+
+<h2 class="idx-cat">Graphs</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/74-introduction-to-graphs.html" class="idx-card"><span class="idx-ch">75</span><span class="idx-title">Introduction to Graphs</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/75-graph-deep-copy.html" class="idx-card"><span class="idx-ch">76</span><span class="idx-title">Graph Deep Copy</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/76-count-islands.html" class="idx-card"><span class="idx-ch">77</span><span class="idx-title">Count Islands</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/77-matrix-infection.html" class="idx-card"><span class="idx-ch">78</span><span class="idx-title">Matrix Infection</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/78-bipartite-graph-validation.html" class="idx-card"><span class="idx-ch">79</span><span class="idx-title">Bipartite Graph Validation</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/79-longest-increasing-path.html" class="idx-card"><span class="idx-ch">80</span><span class="idx-title">Longest Increasing Path</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/80-shortest-transformation-sequence.html" class="idx-card"><span class="idx-ch">81</span><span class="idx-title">Shortest Transformation Sequence</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/81-merging-communities.html" class="idx-card"><span class="idx-ch">82</span><span class="idx-title">Merging Communities</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/82-prerequisites.html" class="idx-card"><span class="idx-ch">83</span><span class="idx-title">Prerequisites</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/83-shortest-path.html" class="idx-card"><span class="idx-ch">84</span><span class="idx-title">Shortest Path</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/84-connect-the-dots.html" class="idx-card"><span class="idx-ch">85</span><span class="idx-title">Connect the Dots</span></a>
+</div>
+
+<h2 class="idx-cat">Backtracking</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/85-introduction-to-backtracking.html" class="idx-card"><span class="idx-ch">86</span><span class="idx-title">Introduction to Backtracking</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/86-find-all-permutations.html" class="idx-card"><span class="idx-ch">87</span><span class="idx-title">Find All Permutations</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/87-find-all-subsets.html" class="idx-card"><span class="idx-ch">88</span><span class="idx-title">Find All Subsets</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/88-n-queens.html" class="idx-card"><span class="idx-ch">89</span><span class="idx-title">N Queens</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/89-combinations-of-a-sum.html" class="idx-card"><span class="idx-ch">90</span><span class="idx-title">Combinations of a Sum</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/90-phone-keypad-combinations.html" class="idx-card"><span class="idx-ch">91</span><span class="idx-title">Phone Keypad Combinations</span></a>
+</div>
+
+<h2 class="idx-cat">Dynamic Programming</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/91-introduction-to-dynamic-programming.html" class="idx-card"><span class="idx-ch">92</span><span class="idx-title">Introduction to Dynamic Programming</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/92-climbing-stairs.html" class="idx-card"><span class="idx-ch">93</span><span class="idx-title">Climbing Stairs</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/93-minimum-coin-combination.html" class="idx-card"><span class="idx-ch">94</span><span class="idx-title">Minimum Coin Combination</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/94-matrix-pathways.html" class="idx-card"><span class="idx-ch">95</span><span class="idx-title">Matrix Pathways</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/95-neighborhood-burglary.html" class="idx-card"><span class="idx-ch">96</span><span class="idx-title">Neighborhood Burglary</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/96-longest-common-subsequence.html" class="idx-card"><span class="idx-ch">97</span><span class="idx-title">Longest Common Subsequence</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/97-longest-palindrome-in-a-string.html" class="idx-card"><span class="idx-ch">98</span><span class="idx-title">Longest Palindrome in a String</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/98-maximum-subarray-sum.html" class="idx-card"><span class="idx-ch">99</span><span class="idx-title">Maximum Subarray Sum</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/99-01-knapsack.html" class="idx-card"><span class="idx-ch">100</span><span class="idx-title">0/1 Knapsack</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/100-largest-square-in-a-matrix.html" class="idx-card"><span class="idx-ch">101</span><span class="idx-title">Largest Square in a Matrix</span></a>
+</div>
+
+<h2 class="idx-cat">Greedy Algorithms</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/101-introduction-to-greedy-algorithms.html" class="idx-card"><span class="idx-ch">102</span><span class="idx-title">Introduction to Greedy Algorithms</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/102-jump-to-the-end.html" class="idx-card"><span class="idx-ch">103</span><span class="idx-title">Jump to the End</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/103-gas-stations.html" class="idx-card"><span class="idx-ch">104</span><span class="idx-title">Gas Stations</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/104-candies.html" class="idx-card"><span class="idx-ch">105</span><span class="idx-title">Candies</span></a>
+</div>
+
+<h2 class="idx-cat">Sort & Search</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/105-introduction-to-sort-and-search.html" class="idx-card"><span class="idx-ch">106</span><span class="idx-title">Introduction to Sort and Search</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/106-sort-linked-list.html" class="idx-card"><span class="idx-ch">107</span><span class="idx-title">Sort Linked List</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/107-sort-array.html" class="idx-card"><span class="idx-ch">108</span><span class="idx-title">Sort Array</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/108-kth-largest-integer.html" class="idx-card"><span class="idx-ch">109</span><span class="idx-title">Kth Largest Integer</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/109-dutch-national-flag.html" class="idx-card"><span class="idx-ch">110</span><span class="idx-title">Dutch National Flag</span></a>
+</div>
+
+<h2 class="idx-cat">Bit Manipulation</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/110-introduction-to-bit-manipulation.html" class="idx-card"><span class="idx-ch">111</span><span class="idx-title">Introduction to Bit Manipulation</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/111-hamming-weights-of-integers.html" class="idx-card"><span class="idx-ch">112</span><span class="idx-title">Hamming Weights of Integers</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/112-lonely-integer.html" class="idx-card"><span class="idx-ch">113</span><span class="idx-title">Lonely Integer</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/113-swap-odd-and-even-bits.html" class="idx-card"><span class="idx-ch">114</span><span class="idx-title">Swap Odd and Even Bits</span></a>
+</div>
+
+<h2 class="idx-cat">Math & Geometry</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/02-coding-patterns/114-introduction-to-math-and-geometry.html" class="idx-card"><span class="idx-ch">115</span><span class="idx-title">Introduction to Math and Geometry</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/115-spiral-traversal.html" class="idx-card"><span class="idx-ch">116</span><span class="idx-title">Spiral Traversal</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/116-reverse-32-bit-integer.html" class="idx-card"><span class="idx-ch">117</span><span class="idx-title">Reverse 32-Bit Integer</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/117-maximum-collinear-points.html" class="idx-card"><span class="idx-ch">118</span><span class="idx-title">Maximum Collinear Points</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/118-the-josephus-problem.html" class="idx-card"><span class="idx-ch">119</span><span class="idx-title">The Josephus Problem</span></a>
+<a href="../bytebytego-courses/02-coding-patterns/119-triangle-numbers.html" class="idx-card"><span class="idx-ch">120</span><span class="idx-title">Triangle Numbers</span></a>
+</div>
+
+<div class="idx-no-results" id="idxNoResults">No problems match your search.</div>
+</main>
+<div class="idx-footer">Coding Interview Patterns Study Notes</div>
+<div class="fab-group">
+    <a href="../index.html" class="fab" title="Home">&#8962;</a>
+    <button class="fab scroll-top" id="scrollTop" title="Scroll to top">&#8593;</button>
+</div>
+<script>
+(function(){
+    var tog=document.getElementById('themeToggle');
+    function applyIcon(){tog.innerHTML=document.documentElement.classList.contains('dark')?'&#9788;':'&#9790;';}
+    applyIcon();
+    tog.onclick=function(){document.documentElement.classList.toggle('dark');localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');applyIcon();};
+    var input=document.getElementById('idxSearch'),main=document.getElementById('idxMain'),nr=document.getElementById('idxNoResults');
+    input.addEventListener('input',function(){
+        var q=this.value.toLowerCase().trim(),totalVis=0;
+        var cats=main.querySelectorAll('.idx-cat');
+        cats.forEach(function(cat){
+            var grid=cat.nextElementSibling,cards=grid.querySelectorAll('.idx-card'),vis=0;
+            cards.forEach(function(c){var t=c.querySelector('.idx-title').textContent.toLowerCase();var show=!q||t.indexOf(q)!==-1;c.style.display=show?'':'none';if(show)vis++;});
+            cat.style.display=vis?'':'none';grid.style.display=vis?'':'none';totalVis+=vis;
+        });
+        nr.style.display=totalVis===0?'block':'none';
+    });
+    var stBtn=document.getElementById('scrollTop');
+    window.addEventListener('scroll',function(){stBtn.classList.toggle('visible',window.scrollY>300);});
+    stBtn.onclick=function(){window.scrollTo({top:0,behavior:'smooth'});};
+})();
+</script>
+</body>
+</html>

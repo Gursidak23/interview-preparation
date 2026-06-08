@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction to Prefix Sums - Coding Interview Patterns</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.8; color: #1a1a1a;
+    max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem; background: #fff;
+  }
+  h1 { font-size: 2rem; margin: 1.5rem 0 1rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h2 { font-size: 1.6rem; margin: 1.8rem 0 0.8rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h3 { font-size: 1.3rem; margin: 1.5rem 0 0.6rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h4, h5, h6 { margin: 1.2rem 0 0.5rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  p { margin: 0.8rem 0; }
+  img { max-width: 100%; height: auto; margin: 1rem 0; border-radius: 4px; }
+  pre { background: #f5f5f5; padding: 1rem; border-radius: 6px; overflow-x: auto; margin: 1rem 0; font-size: 0.9rem; }
+  code { background: #f0f0f0; padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  ul, ol { margin: 0.8rem 0; padding-left: 2rem; }
+  li { margin: 0.3rem 0; }
+  blockquote { border-left: 4px solid #10b981; padding: 0.5rem 1rem; margin: 1rem 0; background: #f0fdf4; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5rem 0.75rem; text-align: left; }
+  th { background: #f5f5f5; font-weight: 600; }
+  hr { border: none; border-top: 1px solid #e5e5e5; margin: 2rem 0; }
+  .breadcrumb {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; color: #666; margin-bottom: 1.5rem;
+    padding-bottom: 1rem; border-bottom: 1px solid #e5e5e5;
+  }
+  .breadcrumb a { color: #10b981; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .nav-footer {
+    margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e5e5e5;
+    display: flex; justify-content: space-between;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.9rem;
+  }
+  .nav-footer a { color: #10b981; text-decoration: none; }
+  .nav-footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="breadcrumb">
+  <a href="../index.html">All Courses</a> &rsaquo; <a href="index.html">Coding Interview Patterns</a> &rsaquo; Introduction to Prefix Sums
+</div>
+<h2 id="intuition">Intuition</h2>
+<p>Imagine keeping track of how much money you spend on takeout meals each day over a period of days.</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a Python-like list assignment.  The variable `spendings` is assigned a list containing five integer values: `10`, `15`, `20`, `10`, and `5`. These values are enclosed within square brackets `[]`, indicating a list data structure. Below the list, the days of the week—Monday (Mon), Tuesday (Tue), Wednesday (Wed), Thursday (Thu), and Friday (Fri)—are aligned with the corresponding numerical values in the list, implying that each number represents the spending for that particular day.  The overall structure shows a simple data representation where daily spending is stored in a list, with the list's index implicitly representing the day of the week." data-nimg="1" height="29" src="images/img-8e4c0e2bc676.svg" style="color: transparent;" width="350"/></div></figure>
+<p>Let's say you want to know the total spent on takeout food up until a particular day. For example, you might like to know that the total you've spent up until Wednesday is $45 ($10 + $15 + $20). This is information which a prefix sum array can store. For an array of integers, <strong>a prefix sum array maintains the running sum of values up to each index in the array</strong>.</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a comparison of two arrays:  'spendings' and 'prefix_sums'. The 'spendings' array, shown as `spendings = [10 15 20 10 5]`, lists daily spending amounts for Monday through Friday, respectively.  Each spending value is aligned vertically with its corresponding day label (Mon, Tue, Wed, Thu, Fri) in a lighter gray font. Below this, the 'prefix_sums' array, displayed as `prefix_sums = [10 25 45 55 60]`, shows the cumulative sum of spending up to and including each day.  For example, the first element (10) is the spending for Monday, the second element (25) is the sum of Monday's and Tuesday's spending (10 + 15), the third (45) is the sum of Monday, Tuesday, and Wednesday's spending (10 + 15 + 20), and so on.  The arrangement clearly demonstrates the relationship between daily spending and its running total, illustrating the concept of prefix sums." data-nimg="1" height="66" src="images/img-c8018de7d1e9.svg" style="color: transparent;" width="372"/></div></figure>
+<p>To obtain the prefix sum at each index, we just add the current number from the input array to the prefix sum from the previous index.</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a step-by-step calculation of prefix sums for an array.  The top row shows the input array `[10, 15, 20, 10, 5]`.  Each element in this array is represented by a vertical orange line pointing downwards.  The label 'prefix_sums = [10' indicates the initialization of a new array to store the prefix sums.  Subsequent rows show the iterative calculation.  Each orange line represents the addition of the current element to the running sum.  Curved peach arrows indicate the addition operation (+), connecting the previous prefix sum to the current element.  The resulting prefix sums are shown in each row within square brackets: `[10]`, `[10, 25]`, `[10, 25, 45]`, `[10, 25, 45, 55]`, and finally `[10, 25, 45, 55, 60]`.  The process demonstrates how each element in the prefix sums array is the cumulative sum of all preceding elements in the input array." data-nimg="1" height="265" src="images/img-8a55241450e3.svg" style="color: transparent;" width="368"/></div></figure>
+<p>In code, the above process looks like this:</p>
+<div class="style_codeTabsWrap__jMkKK"><div class="ant-tabs ant-tabs-top ant-tabs-card style_codeTabs__DEEq6 css-133v4sd"><div aria-orientation="horizontal" class="ant-tabs-nav" role="tablist"><div class="ant-tabs-nav-wrap"><div class="ant-tabs-nav-list" style="transform: translate(0px, 0px);"><div class="ant-tabs-tab ant-tabs-tab-active" data-node-key="0"><div aria-controls="rc-tabs-0-panel-0" aria-selected="true" class="ant-tabs-tab-btn" id="rc-tabs-0-tab-0" role="tab" tabindex="0">Python</div></div><div class="ant-tabs-tab" data-node-key="1"><div aria-controls="rc-tabs-0-panel-1" aria-selected="false" class="ant-tabs-tab-btn" id="rc-tabs-0-tab-1" role="tab" tabindex="-1">JavaScript</div></div><div class="ant-tabs-tab" data-node-key="2"><div aria-controls="rc-tabs-0-panel-2" aria-selected="false" class="ant-tabs-tab-btn" id="rc-tabs-0-tab-2" role="tab" tabindex="-1">Java</div></div><div class="ant-tabs-ink-bar ant-tabs-ink-bar-animated" style="width: 76.75px; left: 38.375px; transform: translateX(-50%);"></div></div></div><div class="ant-tabs-nav-operations ant-tabs-nav-operations-hidden"></div></div><div class="ant-tabs-content-holder"><div class="ant-tabs-content ant-tabs-content-top"><div aria-hidden="false" aria-labelledby="rc-tabs-0-tab-0" class="ant-tabs-tabpane ant-tabs-tabpane-active" id="rc-tabs-0-panel-0" role="tabpanel" tabindex="0"><pre><code class="hljs language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">compute_prefix_sums</span>(<span class="hljs-params">nums</span>):
+    <span class="hljs-comment"># Start by adding the first number to the prefix sums array.</span>
+    prefix_sum = [nums[<span class="hljs-number">0</span>]]
+    <span class="hljs-comment"># For all remaining indexes, add 'nums[i]' to the cumulative sum from the previous</span>
+    <span class="hljs-comment"># index.</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, <span class="hljs-built_in">len</span>(nums)):
+        prefix_sum.append(prefix_sum[-<span class="hljs-number">1</span>] + nums[i])
+</code></pre></div></div></div></div></div>
+<p>As you can see, building a prefix sum array takes <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> time and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> space, where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> denotes the length of the array.</p>
+<p><strong>Applications of prefix sums</strong><br/>
+Aside from allowing us to have constant-time access to running sums at any index within an array, prefix sums are commonly used to efficiently <strong>determine the sum of subarrays</strong>. This application is examined in depth in the problems in this chapter.</p>
+<p>Another interesting variant of prefix sums is prefix products, which populates an array with a running product instead of a running sum. Similar to prefix sums, prefix products provide an efficient way to determine the product of subarrays.</p>
+<h2 id="real-world-example">Real-world Example</h2>
+<p><strong>Financial analysis:</strong> As hinted at earlier, a real-world use of prefix sums is for financial analysis, particularly in calculating cumulative earnings or expenses over time.</p>
+<p>For instance, consider a company's daily revenue over a month. A prefix sum array can be used to quickly calculate the total revenue for any given period within that month. By precomputing the prefix sums, the company can instantly determine the revenue from day 5 to day 20 without having to sum each day's revenue individually. This is especially useful for generating financial reports, where quick calculations over various periods are necessary to analyze trends.</p>
+<h2 id="chapter-outline">Chapter Outline</h2>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a hierarchical diagram illustrating applications of the 'Prefix Sums' coding pattern.  A central, rounded-rectangle box labeled 'Prefix Sums' is connected via dashed lines to two subordinate, rounded-rectangle boxes. The left subordinate box is labeled 'Subarray Sums' and contains two bullet points: '- Sum Between Range' and '- K-Sum Subarrays,' indicating that prefix sums are used to efficiently calculate sums within specified ranges of an array and to find subarrays that sum to a target value (K). The right subordinate box is labeled 'Product Sums' and contains one bullet point: '- Product Array Without Current Element,' showing that prefix sums can also be adapted to compute the product of array elements excluding the current element.  The arrows indicate a top-down relationship, showing how the general 'Prefix Sums' technique branches into these specific applications." data-nimg="1" height="166" src="images/img-ce7444b28217.svg" style="color: transparent;" width="562"/></div></figure>
+<div class="nav-footer">
+  <span><a href="52-largest-overlap-of-intervals.html">Prev</a></span>
+  <span><a href="54-sum-between-range.html">Next</a></span>
+</div>
+</body>
+</html>

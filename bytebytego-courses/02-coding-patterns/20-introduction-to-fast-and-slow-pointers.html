@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction to Fast and Slow Pointers - Coding Interview Patterns</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.8; color: #1a1a1a;
+    max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem; background: #fff;
+  }
+  h1 { font-size: 2rem; margin: 1.5rem 0 1rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h2 { font-size: 1.6rem; margin: 1.8rem 0 0.8rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h3 { font-size: 1.3rem; margin: 1.5rem 0 0.6rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h4, h5, h6 { margin: 1.2rem 0 0.5rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  p { margin: 0.8rem 0; }
+  img { max-width: 100%; height: auto; margin: 1rem 0; border-radius: 4px; }
+  pre { background: #f5f5f5; padding: 1rem; border-radius: 6px; overflow-x: auto; margin: 1rem 0; font-size: 0.9rem; }
+  code { background: #f0f0f0; padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  ul, ol { margin: 0.8rem 0; padding-left: 2rem; }
+  li { margin: 0.3rem 0; }
+  blockquote { border-left: 4px solid #10b981; padding: 0.5rem 1rem; margin: 1rem 0; background: #f0fdf4; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5rem 0.75rem; text-align: left; }
+  th { background: #f5f5f5; font-weight: 600; }
+  hr { border: none; border-top: 1px solid #e5e5e5; margin: 2rem 0; }
+  .breadcrumb {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; color: #666; margin-bottom: 1.5rem;
+    padding-bottom: 1rem; border-bottom: 1px solid #e5e5e5;
+  }
+  .breadcrumb a { color: #10b981; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .nav-footer {
+    margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e5e5e5;
+    display: flex; justify-content: space-between;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.9rem;
+  }
+  .nav-footer a { color: #10b981; text-decoration: none; }
+  .nav-footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="breadcrumb">
+  <a href="../index.html">All Courses</a> &rsaquo; <a href="index.html">Coding Interview Patterns</a> &rsaquo; Introduction to Fast and Slow Pointers
+</div>
+<h2 id="intuition">Intuition</h2>
+<p>The fast and slow pointer technique is a specialized variant of the two-pointer pattern, characterized by the differing speeds at which two pointers traverse a data structure. In this technique, we designate a fast pointer and a slow pointer:</p>
+<ul>
+<li>
+<p>Usually, <strong>the</strong> <strong>slow pointer moves one step</strong> in each iteration.</p>
+</li>
+<li>
+<p>Usually, <strong>the fast pointer moves two steps</strong> in each iteration.</p>
+</li>
+</ul>
+<p>This creates a dynamic in which the fast pointer moves at twice the speed of the slow pointer:</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a visual depiction of the 'slow and fast pointer' algorithm often used in linked list traversal.  The diagram shows two parallel linked lists, each composed of several circular nodes connected by solid arrows representing the `next` pointer in each node.  The top list illustrates the initial state, with a 'slow' pointer (indicated by a light blue box labeled 'slow') and a 'fast' pointer (indicated by an orange box labeled 'fast') both initially pointing to the first node.  Arrows from the boxes point to their respective nodes.  The bottom list shows the pointers after one iteration. The 'slow' pointer has moved one node to the right, and the 'fast' pointer has moved two nodes to the right.  Both lists continue with ellipses (...) indicating that they extend beyond the visible portion.  Dashed arrows on the bottom list show the movement of the pointers.  To the right, a gray box with dashed borders contains pseudocode: `slow = slow.next` and `fast = fast.next.next`, illustrating how the pointers are updated in each iteration.  This code snippet explains the algorithm's core logic: the slow pointer advances one node at a time, while the fast pointer advances two nodes at a time." data-nimg="1" height="177" src="images/img-b17766206835.svg" style="color: transparent;" width="575"/></div></figure>
+<p>Keep in mind these pointers aren't limited to just one and two steps. As long as the fast pointer advances more steps than the slow pointer does, the logic of the fast and slow pointer technique still applies.</p>
+<h2 id="real-world-example">Real-world Example</h2>
+<p><strong>Detecting cycles in symlinks</strong>: Symlinks are shortcuts that point to files or directories in a file system. A real-world example of using the fast and slow pointer technique is detecting cycles in symlinks.</p>
+<p>In this process, the slow pointer follows each symlink one step at a time, while the fast pointer moves two steps at a time. If the fast pointer catches up to the slow pointer, it indicates a loop in the symlinks, which can cause infinite loops or errors when accessing files. To understand how fast and slow pointers detect cycles in this way, study the <em>Linked List Loop</em> problem.</p>
+<h2 id="chapter-outline">Chapter Outline</h2>
+<p>Fast and slow pointers are particularly beneficial in data structures like linked lists, where index-based access isn't available. They allow us to gather crucial information about the data structure's elements through the relative positions of the two pointers, rather than with indexing. This will become clearer as we explore some common use cases in this chapter.</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a hierarchical diagram illustrating the applications of 'Fast and Slow Pointers' coding pattern.  The top-level node, a rounded rectangle, is labeled 'Fast and Slow Pointers'.  From this node, three dashed lines descend to three lower-level nodes, each representing a specific application.  The leftmost node is a rounded rectangle labeled 'Cycle Detection - `Linked List Loop`', indicating its use in detecting cycles within linked lists. The rightmost node is a similarly styled rounded rectangle labeled 'Sequence Analysis - `Happy Number`', showing its application in analyzing number sequences, specifically the 'Happy Number' problem.  Finally, a central lower-level node, also a rounded rectangle, is labeled 'Fractional Point Identification - `Linked List Midpoint`', demonstrating its use in finding the midpoint of a linked list.  The connections between the top node and the three lower nodes represent the different ways the 'Fast and Slow Pointers' pattern can be utilized, with each lower node detailing a specific problem solved using this pattern." data-nimg="1" height="249" src="images/img-840fd7129374.svg" style="color: transparent;" width="384"/></div></figure>
+<div class="nav-footer">
+  <span><a href="19-flatten-a-multi-level-linked-list.html">Prev</a></span>
+  <span><a href="21-linked-list-loop.html">Next</a></span>
+</div>
+</body>
+</html>

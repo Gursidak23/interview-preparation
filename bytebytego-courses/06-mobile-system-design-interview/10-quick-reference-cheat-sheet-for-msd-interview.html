@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Reference Cheat Sheet for MSD Interview - Mobile System Design Interview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.8; color: #1a1a1a;
+    max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem; background: #fff;
+  }
+  h1 { font-size: 2rem; margin: 1.5rem 0 1rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h2 { font-size: 1.6rem; margin: 1.8rem 0 0.8rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h3 { font-size: 1.3rem; margin: 1.5rem 0 0.6rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h4, h5, h6 { margin: 1.2rem 0 0.5rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  p { margin: 0.8rem 0; }
+  img { max-width: 100%; height: auto; margin: 1rem 0; border-radius: 4px; }
+  pre { background: #f5f5f5; padding: 1rem; border-radius: 6px; overflow-x: auto; margin: 1rem 0; font-size: 0.9rem; }
+  code { background: #f0f0f0; padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  ul, ol { margin: 0.8rem 0; padding-left: 2rem; }
+  li { margin: 0.3rem 0; }
+  blockquote { border-left: 4px solid #10b981; padding: 0.5rem 1rem; margin: 1rem 0; background: #f0fdf4; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5rem 0.75rem; text-align: left; }
+  th { background: #f5f5f5; font-weight: 600; }
+  hr { border: none; border-top: 1px solid #e5e5e5; margin: 2rem 0; }
+  .breadcrumb {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; color: #666; margin-bottom: 1.5rem;
+    padding-bottom: 1rem; border-bottom: 1px solid #e5e5e5;
+  }
+  .breadcrumb a { color: #10b981; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .nav-footer {
+    margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e5e5e5;
+    display: flex; justify-content: space-between;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.9rem;
+  }
+  .nav-footer a { color: #10b981; text-decoration: none; }
+  .nav-footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="breadcrumb">
+  <a href="../index.html">All Courses</a> &rsaquo; <a href="index.html">Mobile System Design Interview</a> &rsaquo; Quick Reference Cheat Sheet for MSD Interview
+</div>
+<p>This appendix provides a helpful reference list of topics to consider during your MSD interviews. They're organized by domain, making them easier to navigate.</p>
+<h2 id="network">Network</h2>
+<div class="table-wrap" style="--table-min-width: 640px;"><table><thead><tr><th style="text-align: left;">Category</th><th style="text-align: left;">Key considerations</th></tr></thead><tbody><tr><td style="text-align: left;">Core protocols</td><td style="text-align: left;">• <strong>Communication protocols</strong>: REST, GraphQL, protocol buffers, or gRPC. <br/>• <strong>Real-time updates</strong>: HTTP polling, SSE, WebSockets. <br/>• <strong>Request management</strong>: idempotency keys, priority queuing, rate limiting, request throttling.</td></tr><tr><td style="text-align: left;">Data flow patterns</td><td style="text-align: left;">• <strong>Pagination</strong>: offset vs. cursor-based. <br/>• <strong>Offline capabilities</strong>: offline-first design, optimistic UI updates, conflict resolution. <br/>• <strong>Network resilience</strong>: connectivity handling, exponential backoff.</td></tr><tr><td style="text-align: left;">Security</td><td style="text-align: left;">• <strong>Authentication and authorization</strong>: token lifecycle, biometric auth, recovery flows. <br/>• <strong>Security infrastructure</strong>: encryption in transit and at rest, certificate pinning, compliance requirements.</td></tr></tbody></table></div>
+<h2 id="data-management">Data management</h2>
+<div class="table-wrap" style="--table-min-width: 640px;"><table><thead><tr><th style="text-align: left;">Category</th><th style="text-align: left;">Key considerations</th></tr></thead><tbody><tr><td style="text-align: left;">Architecture</td><td style="text-align: left;">• <strong>Core data flow</strong>: patterns for data flow, layer responsibilities, error handling, error propagation.</td></tr><tr><td style="text-align: left;">Storage and caching</td><td style="text-align: left;">• <strong>Storage options</strong>: key-value, relational/non-relational DB, custom/binary stores, secure storage. <br/>• <strong>Caching</strong>: in-memory vs. disk trade-offs. <br/>• <strong>Eviction policies</strong>: TTL, size-based eviction, priority-based eviction. <br/>• <strong>Privacy</strong>: PII handling, GDPR compliance, data retention policies. <br/>• <strong>Synchronization</strong>: sync strategies, conflict resolution, delta sync.</td></tr><tr><td style="text-align: left;">Data performance</td><td style="text-align: left;">• <strong>Pre-fetching</strong>: predictive fetching, resource usage trade-offs, prioritize critical paths. <br/>• <strong>Background processing</strong>: task efficiency, battery impact, OS background execution limits.</td></tr><tr><td style="text-align: left;">UI &amp; Interactions</td><td style="text-align: left;">• <strong>UI states</strong>: loading, empty, error, content. <br/>• <strong>Input handling</strong>: validation on client and server side, sanitization, feedback for errors. <br/>• <strong>Search</strong>: local vs. server-side search, indexing, typo tolerance.</td></tr></tbody></table></div>
+<h2 id="feature-development">Feature development</h2>
+<div class="table-wrap" style="--table-min-width: 640px;"><table><thead><tr><th style="text-align: left;">Category</th><th style="text-align: left;">Key considerations</th></tr></thead><tbody><tr><td style="text-align: left;">Version management</td><td style="text-align: left;">• <strong>Force upgrading</strong>: soft vs. hard upgrades, when to require updates, graceful prompts, version compatibility policies.<br/>• <strong>Safe rollout</strong>: phased rollouts, feature flags, rollback procedures.<br/>• <strong>CI/CD</strong>: automate build, test and deployments, code quality and security checks, ensure reproducible builds.</td></tr><tr><td style="text-align: left;">Dynamic configuration</td><td style="text-align: left;">• <strong>Remote config</strong>: feature control without app updates, default values for offline scenarios.<br/>• <strong>A/B testing</strong>: experiments with clear metrics, user segmentation.<br/>• <strong>Analytics</strong>: performance and business metrics, crash monitoring, logging.</td></tr><tr><td style="text-align: left;">Code architecture</td><td style="text-align: left;">• <strong>Modularization</strong>: separation of concerns, clear interfaces, balance granularity with practical maintenance.<br/>• <strong>Dependency injection</strong>: testability, object lifecycle management, minimize global state and singletons.<br/>• <strong>Third-party libraries</strong>: security and maintenance evaluation, size impact.</td></tr><tr><td style="text-align: left;">User experience</td><td style="text-align: left;">• <strong>Localization</strong>: text expansion/contraction, cultural and regional differences.<br/>• <strong>Accessibility</strong>: screen readers, contrast, touch targets, test with accessibility tools.<br/>• <strong>Crash reporting</strong>: automated collection, issue prioritization by impact and frequency, ensure right PII handling.</td></tr></tbody></table></div>
+<h2 id="performance">Performance</h2>
+<div class="table-wrap" style="--table-min-width: 640px;"><table><thead><tr><th style="text-align: left;">Category</th><th style="text-align: left;">Key considerations</th></tr></thead><tbody><tr><td style="text-align: left;">User experience</td><td style="text-align: left;">• <strong>Pre-fetching</strong>: predictive fetching, resource usage trade-offs, prioritize critical paths.<br/>• <strong>App startup</strong>: optimize initialization, defer non-critical tasks, measure cold/warm start times.<br/>• <strong>Stability</strong>: prevent crashes, implement error boundaries.</td></tr><tr><td style="text-align: left;">Resource management</td><td style="text-align: left;">• <strong>Battery &amp; CPU</strong>: minimize background processing, batch operations.<br/>• <strong>Network efficiency</strong>: compress payloads, minimize requests, adapt quality on connection type.<br/>• <strong>App size</strong>: optimize assets, use app bundles, remove unused code.</td></tr><tr><td style="text-align: left;">Technical optimizations</td><td style="text-align: left;">• <strong>Caching strategy</strong>: cache appropriate responses, invalidation policies, multi-level caching.<br/>• <strong>Lazy loading</strong>: on-demand components and data loading, defer heavy processing until needed, prioritize visible content first.<br/>• <strong>Concurrency</strong>: proper threading models, avoid blocking main thread, manage thread contention and race conditions.<br/>• <strong>Hardware acceleration</strong>: GPU usage for animations and rendering, specific hardware optimizations.</td></tr><tr><td style="text-align: left;">Monitoring</td><td style="text-align: left;">• <strong>Observability</strong>: performance metrics, proactive alerting, traces for complex operations.<br/>• <strong>Business metrics</strong>: connect performance to business outcomes, track user engagement, user funnels, identify bottlenecks affecting revenue.</td></tr></tbody></table></div>
+<h2 id="team--organization">Team &amp; Organization</h2>
+<div class="table-wrap" style="--table-min-width: 640px;"><table><thead><tr><th style="text-align: left;">Category</th><th style="text-align: left;">Key considerations</th></tr></thead><tbody><tr><td style="text-align: left;">Technical infrastructure</td><td style="text-align: left;">• <strong>Design system</strong>: consistent visual language, reusable components.<br/>• <strong>Development efficiency</strong>: optimized builds, coding standards, effective code review processes.</td></tr><tr><td style="text-align: left;">Process &amp; quality</td><td style="text-align: left;">• <strong>Code quality</strong>: static analysis, automated testing, technical debt.<br/>• <strong>Risk management</strong>: early identification, contingency plans.</td></tr><tr><td style="text-align: left;">Team &amp; culture</td><td style="text-align: left;">• <strong>Developer experience</strong>: efficient workflows, documentation.<br/>• <strong>Team growth</strong>: onboarding, knowledge sharing, continuous learning.</td></tr><tr><td style="text-align: left;">Company context</td><td style="text-align: left;">• <strong>Available resources</strong>: infra constraints, team size and expertise, budget, in-house development vs. 3rd party investments.<br/>• <strong>Business priorities</strong>: objectives alignment, target markets, monetization strategies, short-term needs vs. long-term platform health.<br/>• <strong>Outage handling</strong>: escalation procedures, recovery playbooks, appropriate redundancies.<br/>• <strong>Tech stack</strong>: integration with existing systems, platform consistency, future ecosystem evolution, standardization vs. specialized tools.</td></tr></tbody></table></div>
+<div class="note-block"><p><strong>📌 Remember:</strong> This list isn't meant to be a checkbox exercise where you cover everything. Strategic selection is key! Focus on the considerations most relevant to your specific design challenge, and be ready to explain why those topics are important. Your ability to make thoughtful trade-offs based on the system's unique requirements demonstrates stronger design thinking than attempting to cover every possible topic.</p></div>
+<div class="nav-footer">
+  <span><a href="09-mobile-system-design-building-blocks.html">Prev</a></span>
+  <span></span>
+</div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction to Dynamic Programming - Coding Interview Patterns</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.8; color: #1a1a1a;
+    max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem; background: #fff;
+  }
+  h1 { font-size: 2rem; margin: 1.5rem 0 1rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h2 { font-size: 1.6rem; margin: 1.8rem 0 0.8rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h3 { font-size: 1.3rem; margin: 1.5rem 0 0.6rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h4, h5, h6 { margin: 1.2rem 0 0.5rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  p { margin: 0.8rem 0; }
+  img { max-width: 100%; height: auto; margin: 1rem 0; border-radius: 4px; }
+  pre { background: #f5f5f5; padding: 1rem; border-radius: 6px; overflow-x: auto; margin: 1rem 0; font-size: 0.9rem; }
+  code { background: #f0f0f0; padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  ul, ol { margin: 0.8rem 0; padding-left: 2rem; }
+  li { margin: 0.3rem 0; }
+  blockquote { border-left: 4px solid #10b981; padding: 0.5rem 1rem; margin: 1rem 0; background: #f0fdf4; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5rem 0.75rem; text-align: left; }
+  th { background: #f5f5f5; font-weight: 600; }
+  hr { border: none; border-top: 1px solid #e5e5e5; margin: 2rem 0; }
+  .breadcrumb {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; color: #666; margin-bottom: 1.5rem;
+    padding-bottom: 1rem; border-bottom: 1px solid #e5e5e5;
+  }
+  .breadcrumb a { color: #10b981; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .nav-footer {
+    margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e5e5e5;
+    display: flex; justify-content: space-between;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.9rem;
+  }
+  .nav-footer a { color: #10b981; text-decoration: none; }
+  .nav-footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="breadcrumb">
+  <a href="../index.html">All Courses</a> &rsaquo; <a href="index.html">Coding Interview Patterns</a> &rsaquo; Introduction to Dynamic Programming
+</div>
+<p>Dynamic programming (DP) may seem daunting at first, but we’ll break it down into manageable concepts and techniques. First, let’s get an idea of what DP aims to do by considering the bigger picture.</p>
+<p>Some problems can be broken down into <strong>subproblems</strong>, where each subproblem is a smaller version of the main problem. These subproblems may themselves be broken down into more subproblems as well. This isn’t a foreign concept to us. Recursion is often used to solve problems like these, where we make recursive calls to solve each subproblem.</p>
+<p>However, in the recursive process, it’s possible to generate and solve the same subproblem multiple times, which can be unnecessarily expensive.</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a tree-like diagram illustrating a recursive problem-solving approach.  The top node is labeled `f(main_problem)`, representing the main problem to be solved. This node branches into two subproblems: `f(subproblem_a)` and `f(subproblem_b)`.  `f(subproblem_a)` further breaks down into `f(subproblem_b)` and `f(subproblem_c)`.  Each `f(subproblem_x)` represents a function call to solve a subproblem.  The `f(subproblem_b)` on the right branch is highlighted with a peach-colored background and a curved orange arrow points to it from the text 'solved before,' indicating that this specific subproblem has been solved previously.  Solid lines represent direct function calls, while dashed lines indicate further, unspecified sub-problems stemming from the leaf nodes `f(subproblem_b)` and `f(subproblem_c)`. The diagram visually demonstrates how a complex problem is broken down into smaller, potentially reusable subproblems, highlighting the concept of memoization or dynamic programming where previously solved subproblems are reused to improve efficiency." data-nimg="1" height="205" src="images/img-256e1aec5010.svg" style="color: transparent;" width="570"/></div></figure>
+<p>DP is the antidote to this. It’s a technique that stores solutions to each subproblem, so they can be reused when they’re needed again. In other words, it’s an efficient tool that <strong>ensures each subproblem is solved at most one time</strong>. This can greatly increase the performance of an algorithm.</p>
+<p><strong>The DP process</strong><br/>
+DP is often perceived as challenging, but it follows a pretty consistent problem-solving process, best demonstrated with an example. First, we'll briefly explain some key DP terms, and then dive into the <em>Climbing Stairs</em> problem to learn how to identify a DP problem and develop a DP solution.</p>
+<ul>
+<li>
+<p><strong>Optimal substructure:</strong> the optimal solution to a problem can be constructed from the optimal solutions to its subproblems.</p>
+</li>
+<li>
+<p><strong>Overlapping subproblems:</strong> if the same subproblems are solved repeatedly during the problem-solving process.</p>
+</li>
+<li>
+<p><strong>Recurrence relation:</strong> a formula that expresses the solution to the problem in terms of the solutions to its subproblems.</p>
+</li>
+<li>
+<p><strong>Base cases:</strong> the simplest instances of the problem where the solution is already known, without needing to be decomposed into more subproblems.</p>
+</li>
+</ul>
+<p>The first two terms are essential attributes that a problem must have to be solvable using DP. The last two terms are essential components in every DP solution. These definitions may seem abstract now, but keep them in mind as they will become clearer in the context of a problem.</p>
+<h2 id="real-world-example">Real-world Example</h2>
+<p><strong>Word segmentation:</strong> Search engines use DP in a process called “word segmentation.” When users enter a search query without spaces, DP is employed to determine if white spaces can be added to form valid words. For example, given a query without spaces (like “bestrestaurants”), DP checks all possible ways to insert spaces (“best restaurants,” “best rest aunts”) by solving each segment (subproblem) separately, and storing their solutions to avoid recalculation.</p>
+<h2 id="chapter-outline">Chapter Outline</h2>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a hierarchical diagram illustrating the application of Dynamic Programming.  At the top, a rounded rectangle labeled 'Dynamic Programming' serves as the root node.  A downward-pointing arrow connects it to two rectangular boxes with dashed borders, representing subcategories. The left box is labeled '1D-DP' and lists four problems solved using one-dimensional dynamic programming: 'Climbing Stairs,' 'Minimum Coin Combination,' 'Neighborhood Burglary,' and 'Maximum Subarray Sum.' The right box is labeled '2D-DP' and lists five problems solved using two-dimensional dynamic programming: 'Matrix Pathways,' 'Longest Palindrome in a String,' 'Longest Common Subsequence,' '0/1 Knapsack,' and 'Largest Square in an Array.'  Dashed lines connect the root node to each subcategory box, indicating a parent-child relationship, showing how these specific problems fall under the broader umbrella of Dynamic Programming techniques." data-nimg="1" height="215" src="images/img-dd5311e4a258.svg" style="color: transparent;" width="600"/></div></figure>
+<p>The nature of each DP problem in this chapter is quite unique, but for simplicity, we’ve grouped them into two categories: one-dimensional DP (1D-DP), and two-dimensional DP (2D-DP).</p>
+<div class="nav-footer">
+  <span><a href="90-phone-keypad-combinations.html">Prev</a></span>
+  <span><a href="92-climbing-stairs.html">Next</a></span>
+</div>
+</body>
+</html>

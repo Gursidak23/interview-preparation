@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binary Tree Symmetry - Coding Interview Patterns</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.8; color: #1a1a1a;
+    max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem; background: #fff;
+  }
+  h1 { font-size: 2rem; margin: 1.5rem 0 1rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h2 { font-size: 1.6rem; margin: 1.8rem 0 0.8rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h3 { font-size: 1.3rem; margin: 1.5rem 0 0.6rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h4, h5, h6 { margin: 1.2rem 0 0.5rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  p { margin: 0.8rem 0; }
+  img { max-width: 100%; height: auto; margin: 1rem 0; border-radius: 4px; }
+  pre { background: #f5f5f5; padding: 1rem; border-radius: 6px; overflow-x: auto; margin: 1rem 0; font-size: 0.9rem; }
+  code { background: #f0f0f0; padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  ul, ol { margin: 0.8rem 0; padding-left: 2rem; }
+  li { margin: 0.3rem 0; }
+  blockquote { border-left: 4px solid #10b981; padding: 0.5rem 1rem; margin: 1rem 0; background: #f0fdf4; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5rem 0.75rem; text-align: left; }
+  th { background: #f5f5f5; font-weight: 600; }
+  hr { border: none; border-top: 1px solid #e5e5e5; margin: 2rem 0; }
+  .breadcrumb {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; color: #666; margin-bottom: 1.5rem;
+    padding-bottom: 1rem; border-bottom: 1px solid #e5e5e5;
+  }
+  .breadcrumb a { color: #10b981; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .nav-footer {
+    margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e5e5e5;
+    display: flex; justify-content: space-between;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.9rem;
+  }
+  .nav-footer a { color: #10b981; text-decoration: none; }
+  .nav-footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="breadcrumb">
+  <a href="../index.html">All Courses</a> &rsaquo; <a href="index.html">Coding Interview Patterns</a> &rsaquo; Binary Tree Symmetry
+</div>
+<div class="style_problemDescription__T4cPe"><p>Determine if a binary tree is <strong>vertically symmetric</strong>. That is, the left subtree of the root node is a mirror of the right subtree.</p><h4 id="example">Example:</h4><figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a binary tree data structure.  The tree is composed of nodes, represented by circles, each containing a numerical value. The root node, at the top, contains the value '5'.  This root node connects to two child nodes, each containing the value '2'. Each of these '2' nodes further branches into two child nodes: one with the value '1' and another with the value '4'. The '4' nodes then connect to a child node with the value '3'.  The entire structure is mirrored across a dashed vertical line, creating a symmetrical tree.  No URLs or parameters are present. The numbers within the nodes do not appear to represent any specific data other than their position within the tree structure. The dashed line serves as a visual aid to highlight the symmetry of the tree." data-nimg="1" height="214" src="images/img-cd8dd92ecd1d.svg" style="color: transparent;" width="302"/></div></figure><pre><code class="hljs language-python">Output: <span class="hljs-literal">True</span>
+</code></pre></div>
+<h2 id="intuition">Intuition</h2>
+<p>To check a binary tree's symmetry, we need to assess its left and right subtrees. The first thing to note is that the root node itself doesn’t affect the symmetry of the tree. Therefore, we don't need to consider the root node. We now have the task of comparing two subtrees to check if one vertically mirrors the other.</p>
+<p>Consider the root node’s left and right subtrees in the following example:</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a binary tree data structure.  The topmost node, colored light gray, contains the value '5' and serves as the root of the tree.  From the root, two branches extend downwards, each connecting to a node with the value '2'.  Each of these '2' nodes further branches into two child nodes.  The left '2' node connects to a node with the value '1' and another with the value '4'. The '4' node then connects to a child node with the value '3'.  Similarly, the right '2' node connects to a node with the value '4' and another with the value '1'. The '4' node on the right also connects to a child node with the value '3'. All connections between nodes are represented by lines, with the lines connecting the root node to its children being light gray and the remaining connections being black.  The numbers within each circle represent the data stored in each node of the tree. The structure visually demonstrates a hierarchical relationship between the data elements." data-nimg="1" height="214" src="images/img-77de09b8cbae.svg" style="color: transparent;" width="302"/></div></figure>
+<p>The key observation here is that <strong>the right subtree is an inverted version of the left subtree</strong>.</p>
+<p>We’ve learned from the problem <em>Invert Binary Tree</em> that an inversion is performed by swapping the left and right child of every node. This suggests the value of each node's left child in the left subtree should match the value of the right child of the corresponding node in the right subtree, and vice versa.</p>
+<p>We can start by using DFS to traverse both subtrees. During this traversal, we compare the left and right children of each node in the left subtree with the right and left children of its corresponding node in the right subtree, respectively.</p>
+<ul>
+<li>
+<p>If the values of any two nodes being compared are not the same, the tree is not symmetric.</p>
+</li>
+<li>
+<p>If, at any point, one of the child nodes being compared is null while the other isn’t, the tree is also not symmetric.</p>
+</li>
+</ul>
+<p>Initially, we see the values of the root nodes of the left and right subtrees are equal:</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a comparison of two tree structures labeled 'node1' and 'node2', each rooted at a node with value '2'.  'node1' branches into a left child with value '1' and a right child with value '4', which further branches into a child with value '3'. Similarly, 'node2' branches into a left child with value '4' (which further branches into a child with value '3') and a right child with value '1'.  Arrows point from the labels 'node1' and 'node2' to their respective root nodes, indicating the input to a function 'dfs(node1, node2)'.  A separate, light-grey, dashed-bordered box to the right describes the function's first step: '1. check that node1.val == node2.val', indicating a comparison of the root node values of the two input trees." data-nimg="1" height="214" src="images/img-fa63549b52be.svg" style="color: transparent;" width="503"/></div></figure>
+<p>Since they’re equal, proceed by comparing their children through recursive DFS calls. Specifically, make two recursive DFS calls to compare the left child of one node with the right child of the other. This checks that node2’s children contain the same values as node1’s children, but inverted.</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents two binary trees labeled 'node1' and 'node2', each rooted at a node with value '2'.  In 'node1', the left child of the root is '1' and the right child is '4'.  Node '4' has a child '3'. In 'node2', the left child of the root is '4' and the right child is '1'. Node '4' has a child '3'.  Cyan arrows indicate the 'left' and 'right' branches in both trees. Magenta arrows highlight the comparison between the left subtree of 'node1' and the right subtree of 'node2', and vice-versa. Dashed cyan lines connect nodes '1' and '3' from 'node1' to nodes '1' and '3' from 'node2', respectively, labeled 'compare'.  To the right, a gray box describes a check:  '2. check that dfs(node1.left, node2.right) and dfs(node1.right, node2.left) are True,' indicating a depth-first search comparison between the specified subtrees to verify their structural equality." data-nimg="1" height="214" src="images/img-bf4573c16d95.svg" style="color: transparent;" width="581"/></div></figure>
+<p>If either DFS call returns false, the subtrees are not symmetric. If both DFS calls return true, the subtrees are symmetric. This process is repeated for the entire tree.</p>
+<h2 id="implementation">Implementation</h2>
+<div class="style_codeTabsWrap__jMkKK"><div class="ant-tabs ant-tabs-top ant-tabs-card style_codeTabs__DEEq6 css-133v4sd"><div aria-orientation="horizontal" class="ant-tabs-nav" role="tablist"><div class="ant-tabs-nav-wrap"><div class="ant-tabs-nav-list" style="transform: translate(0px, 0px);"><div class="ant-tabs-tab ant-tabs-tab-active" data-node-key="0"><div aria-controls="rc-tabs-0-panel-0" aria-selected="true" class="ant-tabs-tab-btn" id="rc-tabs-0-tab-0" role="tab" tabindex="0">Python</div></div><div class="ant-tabs-tab" data-node-key="1"><div aria-controls="rc-tabs-0-panel-1" aria-selected="false" class="ant-tabs-tab-btn" id="rc-tabs-0-tab-1" role="tab" tabindex="-1">JavaScript</div></div><div class="ant-tabs-tab" data-node-key="2"><div aria-controls="rc-tabs-0-panel-2" aria-selected="false" class="ant-tabs-tab-btn" id="rc-tabs-0-tab-2" role="tab" tabindex="-1">Java</div></div><div class="ant-tabs-ink-bar ant-tabs-ink-bar-animated" style="width: 76.75px; left: 38.375px; transform: translateX(-50%);"></div></div></div><div class="ant-tabs-nav-operations ant-tabs-nav-operations-hidden"></div></div><div class="ant-tabs-content-holder"><div class="ant-tabs-content ant-tabs-content-top"><div aria-hidden="false" aria-labelledby="rc-tabs-0-tab-0" class="ant-tabs-tabpane ant-tabs-tabpane-active" id="rc-tabs-0-panel-0" role="tabpanel" tabindex="0"><pre><code class="hljs language-python"><span class="hljs-keyword">from</span> ds <span class="hljs-keyword">import</span> TreeNode
+    
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">binary_tree_symmetry</span>(<span class="hljs-params">root: TreeNode</span>) -&gt; <span class="hljs-built_in">bool</span>:
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> root:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
+    <span class="hljs-keyword">return</span> compare_trees(root.left, root.right)
+    
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">compare_trees</span>(<span class="hljs-params">node1: TreeNode, node2: TreeNode</span>) -&gt; <span class="hljs-built_in">bool</span>:
+    <span class="hljs-comment"># Base case: if both nodes are null, they're symmetric.</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> node1 <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> node2:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
+    <span class="hljs-comment"># If one node is null and the other isn't, they aren't symmetric.</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> node1 <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> node2:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
+    <span class="hljs-comment"># If the values of the current nodes don't match, trees aren't symmetric.</span>
+    <span class="hljs-keyword">if</span> node1.val != node2.val:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
+    <span class="hljs-comment"># Compare the 'node1's left subtree with 'node2's right subtree. If these</span>
+    <span class="hljs-comment"># aren't symmetric, the whole tree is not symmetric.</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> compare_trees(node1.left, node2.right):
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
+    <span class="hljs-comment"># Compare the 'node1's right subtree with 'node2's left subtree.</span>
+    <span class="hljs-keyword">return</span> compare_trees(node1.right, node2.left)
+</code></pre></div></div></div></div></div>
+<h3 id="complexity-analysis">Complexity Analysis</h3>
+<p><strong>Time complexity:</strong> The time complexity of <code>binary_tree_symmetry</code> is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span>, where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> denotes the number of nodes in the tree. This is because we process each node recursively at most once.</p>
+<p><strong>Space complexity:</strong> The space complexity is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> due to the space taken up by the recursive call stack, which can grow as large as the height of the binary tree. The largest possible height of a binary tree is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span>.</p>
+<h2 id="interview-tip">Interview Tip</h2>
+<p>Tip: Cover null cases. Always check for null or empty inputs before using their attributes in a function. In this problem, the main <code>binary_tree_symmetry</code> function itself accesses the left and right attributes of the input node, necessitating an initial null check.</p>
+<div class="nav-footer">
+  <span><a href="65-maximum-sum-of-a-continuous-path-in-a-binary-tree.html">Prev</a></span>
+  <span><a href="67-binary-tree-columns.html">Next</a></span>
+</div>
+</body>
+</html>

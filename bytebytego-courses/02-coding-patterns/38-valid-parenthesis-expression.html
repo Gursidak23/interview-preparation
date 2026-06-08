@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valid Parenthesis Expression - Coding Interview Patterns</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.8; color: #1a1a1a;
+    max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem; background: #fff;
+  }
+  h1 { font-size: 2rem; margin: 1.5rem 0 1rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h2 { font-size: 1.6rem; margin: 1.8rem 0 0.8rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h3 { font-size: 1.3rem; margin: 1.5rem 0 0.6rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h4, h5, h6 { margin: 1.2rem 0 0.5rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  p { margin: 0.8rem 0; }
+  img { max-width: 100%; height: auto; margin: 1rem 0; border-radius: 4px; }
+  pre { background: #f5f5f5; padding: 1rem; border-radius: 6px; overflow-x: auto; margin: 1rem 0; font-size: 0.9rem; }
+  code { background: #f0f0f0; padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  ul, ol { margin: 0.8rem 0; padding-left: 2rem; }
+  li { margin: 0.3rem 0; }
+  blockquote { border-left: 4px solid #10b981; padding: 0.5rem 1rem; margin: 1rem 0; background: #f0fdf4; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5rem 0.75rem; text-align: left; }
+  th { background: #f5f5f5; font-weight: 600; }
+  hr { border: none; border-top: 1px solid #e5e5e5; margin: 2rem 0; }
+  .breadcrumb {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; color: #666; margin-bottom: 1.5rem;
+    padding-bottom: 1rem; border-bottom: 1px solid #e5e5e5;
+  }
+  .breadcrumb a { color: #10b981; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .nav-footer {
+    margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e5e5e5;
+    display: flex; justify-content: space-between;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.9rem;
+  }
+  .nav-footer a { color: #10b981; text-decoration: none; }
+  .nav-footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="breadcrumb">
+  <a href="../index.html">All Courses</a> &rsaquo; <a href="index.html">Coding Interview Patterns</a> &rsaquo; Valid Parenthesis Expression
+</div>
+<div class="style_problemDescription__T4cPe"><p>Given a string representing an expression of parentheses containing the characters <code>'('</code>, <code>')'</code>, <code>'['</code>, <code>']'</code>, <code>'{'</code>, or <code>'}'</code>, determine if the expression forms a <strong>valid sequence of parentheses</strong>.</p><p>A sequence of parentheses is valid if every opening parenthesis has a corresponding closing parenthesis, and no closing parenthesis appears before its matching opening parenthesis.</p><h4 id="example-1">Example 1:</h4><pre><code class="hljs language-python">Input: s = <span class="hljs-string">'([]{})'</span>
+Output: <span class="hljs-literal">True</span>
+</code></pre><h4 id="example-2">Example 2:</h4><pre><code class="hljs language-python">Input: s = <span class="hljs-string">'([]{)}'</span>
+Output: <span class="hljs-literal">False</span>
+</code></pre><p>Explanation: The <code>'('</code> parenthesis is closed before its nested <code>'{'</code> parenthesis is closed.</p></div>
+<h2 id="intuition">Intuition</h2>
+<p>An early observation is that for each type of parenthesis, the number of opening and closing parenthesis must be identical. However, to check if an expression is valid, this observation alone isn’t enough. For example, the string "<code>())(</code>" has the same number of opening and closing parentheses, but is still invalid. This means we need a way to account for the order of parentheses.</p>
+<p>Consider the string “<code>()</code>”. The first parenthesis is opening, and we’re waiting for it to be closing. Upon reaching the second parenthesis, the first parenthesis gets closed.</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a comparison of two scenarios related to parenthesis in code, likely illustrating a coding pattern or concept.  The left side depicts a state where an opening parenthesis '(' is 'waiting to be closed,' indicated by a downward arrow pointing from the text 'waiting to be closed' to a single opening parenthesis `(` below, labeled with '0' and '1' underneath, possibly representing a counter or index. The right side shows the state where a closing parenthesis ')' is introduced, represented by a downward arrow from 'closes '('' to a closing parenthesis `)` below, also labeled with '0' and '1' similarly.  The overall structure highlights the difference between an unclosed opening parenthesis and the subsequent closing of that parenthesis, emphasizing the importance of balanced parentheses in programming syntax." data-nimg="1" height="86" src="images/img-cabdc4326c48.svg" style="color: transparent;" width="367"/></div></figure>
+<p>Now, consider the string “<code>[(])</code>”. When we reach index 1, we have two opening parentheses waiting to be closed. In particular, we expect ‘<code>(</code>‘ to be closed before ‘<code>[</code>’. The first closing parenthesis we encounter is ‘<code>]</code>’, which does not close ‘<code>(</code>’. Therefore, this string is invalid.</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a comparison of two scenarios illustrating parenthesis matching in a coding context.  The left side depicts a correctly matched sequence, showing the text 'most recent parenthesis waiting to be closed' above a gray downward-pointing arrow. This arrow points to a sequence of parentheses: `[(])`, indexed 0 to 3 from left to right.  The closing parenthesis at index 3 correctly matches the opening parenthesis at index 1, indicating proper nesting.  In contrast, the right side shows an incorrectly matched sequence.  The text 'does not close most recent parenthesis' (in red) is positioned above a red downward-pointing arrow, which points to a similar sequence `[(])`, also indexed 0 to 3. However, here the closing parenthesis at index 3 does *not* match the most recent opening parenthesis (at index 1), highlighting an error in parenthesis matching.  Both sides use the same parenthesis characters and indexing to facilitate a direct comparison of correct versus incorrect parenthesis closure." data-nimg="1" height="104" src="images/img-14fea778cf06.svg" style="color: transparent;" width="538"/></div></figure>
+<p>The key observation here is that <strong>the most recent opening parenthesis we encounter should be the first parenthesis that gets closed</strong>. So, opening parentheses are processed from most recent to least recent, which is indicative of a last-in-first-out (LIFO) dynamic. This leads to the idea that a <strong>stack</strong> can be used to solve this problem.</p>
+<p><strong>Stack</strong><br/>
+Here’s a high-level strategy:</p>
+<ul>
+<li>
+<p>Add each opening parenthesis we encounter to the stack. This way, the most recent parenthesis is always at the top of the stack.</p>
+</li>
+<li>
+<p>When encountering a closing parenthesis, check if it can close the most recent opening parenthesis.</p>
+<ul>
+<li>If it can, close that pair of parenthesis by popping off the top of the stack.</li>
+<li>If not, the string is invalid.</li>
+</ul>
+</li>
+</ul>
+<p>Let’s see how this strategy works over an example:</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a sequence of six distinct symbols, arranged horizontally from left to right with spaces between them.  The symbols are: an opening parenthesis `(`, an opening square bracket `[`, a closing square bracket `]`, an opening curly brace `{`, a closing parenthesis `)`, and a closing curly brace `}`.  There are no connections or information flow depicted between the symbols; they are simply presented as individual, independent elements.  No labels, text, URLs, or parameters are present within the image. The image likely illustrates the different types of grouping symbols used in programming languages or mathematical notation." data-nimg="1" height="19" src="images/img-c2a546dcc811.svg" style="color: transparent;" width="196"/></div></figure>
+<hr/>
+<p>For each opening parenthesis we encounter, push it to the top of the stack:</p>
+<figure class="py-1"><div style="display: flex; justify-content: left;"><img alt="Image represents a visual explanation of a stack data structure used for parenthesis matching.  On the left, a sequence of opening and closing parentheses, brackets, and braces – `( [ ] { } )` – is shown, with an orange square containing an 'i' and a downward arrow pointing to the sequence, suggesting input.  On the right, a diagram depicts a stack labeled 'stack' with a 'top' indicator.  A light-grey 'top:' label points to the top of the stack, which is currently empty. A light-blue arrow labeled 'push (' indicates that the opening parenthesis '(' is being pushed onto the stack, implying that the algorithm is processing the input sequence from left to right and using the stack to keep track of opening delimiters.  The overall image illustrates the initial step of a parenthesis matching algorithm using a stack." data-nimg="1" height="86" src="images/img-164334c3e1cc.svg" style="color: transparent;" width="433"/></div></figure>
+<figure class="py-1"><div style="display: flex; justify-content: left;"><img alt="Image represents a visual explanation of a stack data structure used in coding, specifically demonstrating a push operation.  On the left, a sequence of opening and closing parentheses, brackets, and braces: `( [ ] { ) }` is shown.  An orange square containing an 'i' symbol, suggesting input, points downwards with an arrow towards the '[' bracket, indicating the element being processed. On the right, a diagram depicts a stack labeled 'stack' with a 'top' pointer.  The stack currently contains an opening parenthesis '('. A light-blue arrow labeled 'push [' shows the '[' bracket being added to the top of the stack, illustrating the 'push' operation where a new element is added to the top of the stack.  The arrangement visually explains how an input element is added to the stack, modifying its contents and updating the top pointer." data-nimg="1" height="86" src="images/img-343d9c98bb49.svg" style="color: transparent;" width="436"/></div></figure>
+<hr/>
+<p>Next, we encounter a closing parenthesis. Comparing it to the opening parenthesis at the top of the stack, we see that it correctly closes that opening parenthesis. So, we can pop off the opening parenthesis at the top of the stack:</p>
+<figure class="py-1"><div style="display: flex; justify-content: left;"><img alt="Image represents a visual explanation of a stack data structure used for parenthesis matching.  On the left, a sequence of opening and closing parentheses, brackets, and braces — `(`, `[`, `]`, `{`, `)` — is shown. An orange square labeled 'i' points downwards, indicating an input stream of these characters.  To the right, a stack is depicted as a container labeled 'stack' with a 'top' pointer indicating the top element.  Inside the stack, an opening bracket '[' is present. A purple arrow labeled 'pop' extends from the top of the stack to a light gray dashed box containing the text ''[' is closed by ']':', illustrating that the top element '[' is being popped from the stack, implying a matching closing bracket ']' is expected in the input stream to maintain balanced parentheses.  The diagram demonstrates how a stack is used to verify the correct pairing of opening and closing delimiters in a given input string." data-nimg="1" height="99" src="images/img-8f7c049c2e2f.svg" style="color: transparent;" width="591"/></div></figure>
+<hr/>
+<p>The next character is an opening parenthesis, which we just push to the top of the stack:</p>
+<figure class="py-1"><div style="display: flex; justify-content: left;"><img alt="Image represents a visual explanation of a stack data structure and its 'push' operation.  The left side shows a sequence of opening and closing brackets and braces: '(', '[', ']', '{', ')', '}'.  A downward-pointing orange arrow with a small orange square containing an 'i' (likely indicating information or instruction) points to the '{' character. This suggests the '{' is the next element to be processed. The right side depicts a stack labeled 'stack' with its contents shown as '{' and '('; the label 'top:' indicates the top of the stack. A light-blue arrow labeled 'push { ' points from the right to the stack, illustrating the 'push' operation where the '{' character is being added to the top of the stack.  The overall diagram demonstrates how a character ('{') is pushed onto a stack, which is a Last-In, First-Out (LIFO) data structure." data-nimg="1" height="83" src="images/img-6bd888f340f9.svg" style="color: transparent;" width="430"/></div></figure>
+<hr/>
+<p>The next character is a closing parenthesis, ‘<code>)</code>’, which does not close the opening parenthesis at the top of the stack, ‘<code>{</code>’. This means this parenthesis expression is invalid. As such, we return false.</p>
+<figure class="py-1"><div style="display: flex; justify-content: left;"><img alt="Image represents a visual explanation of a stack-based approach to validating balanced parentheses in a code snippet.  On the left, a sequence of opening and closing parentheses, brackets, and braces (`(`, `[`, `{`, `)`, `]`, `}`) is shown. An orange arrow with an 'i' icon points downwards towards the curly brace '{' and closing parenthesis ')'. To the right, a diagram depicts a stack data structure labeled 'stack,' with the characters '{' and '(' currently inside it, indicating that these opening brackets have been pushed onto the stack. The label 'top:' points to the top of the stack, which is '{'.  A light gray dashed-line box contains pseudocode: `'{' is not closed by ')': return False`, illustrating a scenario where an opening curly brace '{' is encountered, but its corresponding closing brace '}' is not found before a closing parenthesis ')', resulting in a `False` return value, indicating unbalanced parentheses.  The overall image demonstrates how a stack can be used to track opening brackets and check for proper closing counterparts during code validation." data-nimg="1" height="99" src="images/img-ceab95063e6b.svg" style="color: transparent;" width="624"/></div></figure>
+<hr/>
+<p>If we’ve iterated over the entire string without returning false, that means we’ve accounted for all closing parentheses in the string.</p>
+<p><strong>Edge case: extra opening parentheses</strong><br/>
+We only check for invalidity at closing parenthesis, so need to perform a final check to ensure there aren’t any opening parentheses in the string left unclosed. This can be done by checking if the stack is empty after processing the whole input string, as a non-empty stack indicates opening parentheses remain in the stack.</p>
+<p><strong>Managing three types of parentheses</strong><br/>
+In our algorithm, we need a way to ensure we compare the correct types of opening and closing parentheses. We can use a <strong>hash map</strong> for this, which maps each type of opening parenthesis to its corresponding closing parenthesis:</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a simple diagram titled 'parenthesis_map' illustrating a mapping between opening and closing parentheses, brackets, and braces.  The diagram is rectangular and divided vertically into two equal sections labeled 'open' and 'closed' respectively.  The 'open' section displays an opening curly brace '{', an opening square bracket '[', and an opening parenthesis '(', stacked vertically.  The 'closed' section mirrors this, showing the corresponding closing curly brace '}', closing square bracket ']', and closing parenthesis ')', also stacked vertically in the same order.  The arrangement visually demonstrates a one-to-one correspondence between each opening symbol on the left and its respective closing symbol on the right, implying a data structure or algorithm that relies on pairing these symbols for validation or processing." data-nimg="1" height="138" src="images/img-f6567bb8e175.svg" style="color: transparent;" width="145"/></div></figure>
+<p>This hash map can also be used as a way to check if a parenthesis is an opening or a closing one: if the parenthesis exists in this hash map as a key, it’s an opening parenthesis.</p>
+<h2 id="implementation">Implementation</h2>
+<div class="style_codeTabsWrap__jMkKK"><div class="ant-tabs ant-tabs-top ant-tabs-card style_codeTabs__DEEq6 css-133v4sd"><div aria-orientation="horizontal" class="ant-tabs-nav" role="tablist"><div class="ant-tabs-nav-wrap"><div class="ant-tabs-nav-list" style="transform: translate(0px, 0px);"><div class="ant-tabs-tab ant-tabs-tab-active" data-node-key="0"><div aria-controls="rc-tabs-0-panel-0" aria-selected="true" class="ant-tabs-tab-btn" id="rc-tabs-0-tab-0" role="tab" tabindex="0">Python</div></div><div class="ant-tabs-tab" data-node-key="1"><div aria-controls="rc-tabs-0-panel-1" aria-selected="false" class="ant-tabs-tab-btn" id="rc-tabs-0-tab-1" role="tab" tabindex="-1">JavaScript</div></div><div class="ant-tabs-tab" data-node-key="2"><div aria-controls="rc-tabs-0-panel-2" aria-selected="false" class="ant-tabs-tab-btn" id="rc-tabs-0-tab-2" role="tab" tabindex="-1">Java</div></div><div class="ant-tabs-ink-bar ant-tabs-ink-bar-animated" style="width: 76.75px; left: 38.375px; transform: translateX(-50%);"></div></div></div><div class="ant-tabs-nav-operations ant-tabs-nav-operations-hidden"></div></div><div class="ant-tabs-content-holder"><div class="ant-tabs-content ant-tabs-content-top"><div aria-hidden="false" aria-labelledby="rc-tabs-0-tab-0" class="ant-tabs-tabpane ant-tabs-tabpane-active" id="rc-tabs-0-panel-0" role="tabpanel" tabindex="0"><pre><code class="hljs language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">valid_parenthesis_expression</span>(<span class="hljs-params">s: <span class="hljs-built_in">str</span></span>) -&gt; <span class="hljs-built_in">bool</span>:
+    parentheses_map = {<span class="hljs-string">'('</span>: <span class="hljs-string">')'</span>, <span class="hljs-string">'{'</span>: <span class="hljs-string">'}'</span>, <span class="hljs-string">'['</span>: <span class="hljs-string">']'</span>}
+    stack = []
+    <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> s:
+        <span class="hljs-comment"># If the current character is an opening parenthesis, push it onto the stack.</span>
+        <span class="hljs-keyword">if</span> c <span class="hljs-keyword">in</span> parentheses_map:
+            stack.append(c)
+        <span class="hljs-comment"># If the current character is a closing parenthesis, check if it closes the</span>
+        <span class="hljs-comment"># opening parenthesis at the top of the stack.</span>
+        <span class="hljs-keyword">else</span>:
+            <span class="hljs-keyword">if</span> stack <span class="hljs-keyword">and</span> parentheses_map[stack[-<span class="hljs-number">1</span>]] == c:
+                stack.pop()
+            <span class="hljs-keyword">else</span>:
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
+    <span class="hljs-comment"># If the stack is empty, all opening parentheses were successfully closed.</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">not</span> stack
+</code></pre></div></div></div></div></div>
+<h3 id="complexity-analysis">Complexity Analysis</h3>
+<p><strong>Time complexity:</strong> The time complexity of <code>valid_parenthesis_expression</code> is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> because we traverse the entire string once. For each character, we perform a constant-time operation, either pushing an opening parenthesis onto the stack or popping it off for a matching closing parenthesis.</p>
+<p><strong>Space complexity:</strong> The space complexity is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> because the stack stores at most <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> characters, and the hash map takes up <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span> space.</p>
+<div class="nav-footer">
+  <span><a href="37-introduction-to-stacks.html">Prev</a></span>
+  <span><a href="39-next-largest-number-to-the-right.html">Next</a></span>
+</div>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>ML System Design - Study Notes</title>
+<script>if(localStorage.getItem('theme')==='dark')document.documentElement.classList.add('dark');</script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --bg:#f5f5f5;--text:#333;--card-bg:#fff;--card-shadow:rgba(0,0,0,0.06);--card-hover:rgba(0,0,0,0.1);--muted:#999;--cat-text:#1a1a2e;--border:#e8e8e8;--search-bg:rgba(255,255,255,0.15);--accent:#06b6d4; }
+html.dark { --bg:#121212;--text:#e0e0e0;--card-bg:#1e1e2e;--card-shadow:rgba(0,0,0,0.3);--card-hover:rgba(0,0,0,0.5);--muted:#777;--cat-text:#ccc;--border:#2a2a3a;--search-bg:rgba(255,255,255,0.1); }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--text); transition:background .3s,color .3s; }
+.idx-header { background:#1a1a2e; color:#fff; padding:48px 24px 40px; text-align:center; position:relative; }
+.idx-header h1 { font-size:2em; font-weight:800; margin-bottom:8px; }
+.idx-header p { font-size:1.05em; color:rgba(255,255,255,0.7); }
+.theme-toggle { position:absolute;top:16px;right:20px;background:rgba(255,255,255,0.12);border:none;color:#fff;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:background .2s; }
+.theme-toggle:hover { background:rgba(255,255,255,0.22); }
+.idx-search { max-width:400px;margin:20px auto 0;position:relative; }
+.idx-search input { width:100%;padding:10px 16px 10px 38px;border:none;border-radius:8px;background:var(--search-bg);color:#fff;font-size:14px;outline:none;font-family:inherit; }
+.idx-search input::placeholder { color:rgba(255,255,255,0.45); }
+.idx-search-icon { position:absolute;left:12px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.4);font-size:14px;pointer-events:none; }
+.idx-crumb { max-width:1000px;margin:0 auto;padding:14px 24px 0;font-size:13px;color:var(--muted); }
+.idx-crumb a { color:var(--accent);text-decoration:none; }
+.idx-crumb a:hover { text-decoration:underline; }
+.idx-crumb span { margin:0 6px;opacity:0.5; }
+.idx-main { max-width:1000px; margin:0 auto; padding:24px; }
+.idx-cat { font-size:1.15em;font-weight:700;color:var(--cat-text);margin:32px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--accent); }
+.idx-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:14px; }
+.idx-card { display:flex;align-items:center;gap:14px;background:var(--card-bg);border-radius:10px;padding:16px 18px;text-decoration:none;color:var(--text);box-shadow:0 1px 4px var(--card-shadow);transition:box-shadow .2s,transform .2s,background .3s; }
+.idx-card:hover { box-shadow:0 4px 16px var(--card-hover);transform:translateY(-2px); }
+.idx-ch { flex-shrink:0;width:36px;height:36px;border-radius:50%;background:#1a1a2e;color:var(--accent);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center; }
+.idx-title { font-size:14px;font-weight:600;line-height:1.35; }
+.idx-footer { text-align:center;padding:24px;color:var(--muted);font-size:13px;margin-top:32px;border-top:1px solid var(--border);transition:border-color .3s; }
+.idx-no-results { display:none;text-align:center;padding:24px;color:var(--muted);font-size:14px; }
+.fab-group { position:fixed;bottom:28px;right:28px;display:flex;flex-direction:column;gap:12px;z-index:1000; }
+.fab { width:44px;height:44px;border-radius:50%;border:none;background:#1a1a2e;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,0.25);transition:transform .2s;text-decoration:none; }
+.fab:hover { transform:scale(1.1); }
+.fab.scroll-top { opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s,transform .2s; }
+.fab.scroll-top.visible { opacity:1;visibility:visible; }
+@media screen and (max-width:768px) { .idx-grid{grid-template-columns:repeat(2,1fr);gap:10px;} .idx-header{padding:32px 16px 28px;} .idx-header h1{font-size:1.5em;} .idx-main{padding:16px;} .idx-crumb{padding:10px 16px 0;} .theme-toggle{top:12px;right:12px;width:36px;height:36px;font-size:16px;} }
+@media screen and (max-width:480px) { .idx-grid{grid-template-columns:1fr;} .idx-card{padding:14px;} }
+</style>
+</head>
+<body>
+<div class="idx-header">
+    <button class="theme-toggle" id="themeToggle" title="Toggle dark mode">&#9790;</button>
+    <h1>ML System Design</h1>
+    <p>11 lessons on designing production machine learning systems</p>
+    <div class="idx-search"><span class="idx-search-icon">&#128269;</span><input type="text" id="idxSearch" placeholder="Filter topics..." autocomplete="off"></div>
+</div>
+<div class="idx-crumb"><a href="../index.html">Home</a><span>&#8250;</span>ML System Design</div>
+<main class="idx-main" id="idxMain">
+
+<h2 class="idx-cat">Introduction</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/05-ml-system-design-interview/00-introduction-and-overview.html" class="idx-card"><span class="idx-ch">1</span><span class="idx-title">Introduction and Overview</span></a>
+</div>
+
+<h2 class="idx-cat">Visual & Video Systems</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/05-ml-system-design-interview/01-visual-search-system.html" class="idx-card"><span class="idx-ch">2</span><span class="idx-title">Visual Search System</span></a>
+<a href="../bytebytego-courses/05-ml-system-design-interview/02-google-street-view-blurring-system.html" class="idx-card"><span class="idx-ch">3</span><span class="idx-title">Google Street View Blurring System</span></a>
+<a href="../bytebytego-courses/05-ml-system-design-interview/03-youtube-video-search.html" class="idx-card"><span class="idx-ch">4</span><span class="idx-title">YouTube Video Search</span></a>
+<a href="../bytebytego-courses/05-ml-system-design-interview/04-harmful-content-detection.html" class="idx-card"><span class="idx-ch">5</span><span class="idx-title">Harmful Content Detection</span></a>
+</div>
+
+<h2 class="idx-cat">Recommendation Systems</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/05-ml-system-design-interview/05-video-recommendation-system.html" class="idx-card"><span class="idx-ch">6</span><span class="idx-title">Video Recommendation System</span></a>
+<a href="../bytebytego-courses/05-ml-system-design-interview/06-event-recommendation-system.html" class="idx-card"><span class="idx-ch">7</span><span class="idx-title">Event Recommendation System</span></a>
+<a href="../bytebytego-courses/05-ml-system-design-interview/09-personalized-news-feed.html" class="idx-card"><span class="idx-ch">8</span><span class="idx-title">Personalized News Feed</span></a>
+</div>
+
+<h2 class="idx-cat">Prediction & Ranking</h2>
+<div class="idx-grid">
+<a href="../bytebytego-courses/05-ml-system-design-interview/07-ad-click-prediction-on-social-platforms.html" class="idx-card"><span class="idx-ch">9</span><span class="idx-title">Ad Click Prediction on Social Platforms</span></a>
+<a href="../bytebytego-courses/05-ml-system-design-interview/08-similar-listings-on-vacation-rental-platforms.html" class="idx-card"><span class="idx-ch">10</span><span class="idx-title">Similar Listings on Vacation Rental Platforms</span></a>
+<a href="../bytebytego-courses/05-ml-system-design-interview/10-people-you-may-know.html" class="idx-card"><span class="idx-ch">11</span><span class="idx-title">People You May Know</span></a>
+</div>
+
+<div class="idx-no-results" id="idxNoResults">No topics match your search.</div>
+</main>
+<div class="idx-footer">ML System Design Study Notes</div>
+<div class="fab-group">
+    <a href="../index.html" class="fab" title="Home">&#8962;</a>
+    <button class="fab scroll-top" id="scrollTop" title="Scroll to top">&#8593;</button>
+</div>
+<script>
+(function(){
+    var tog=document.getElementById('themeToggle');
+    function applyIcon(){tog.innerHTML=document.documentElement.classList.contains('dark')?'&#9788;':'&#9790;';}
+    applyIcon();
+    tog.onclick=function(){document.documentElement.classList.toggle('dark');localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');applyIcon();};
+    var input=document.getElementById('idxSearch'),main=document.getElementById('idxMain'),nr=document.getElementById('idxNoResults');
+    input.addEventListener('input',function(){
+        var q=this.value.toLowerCase().trim(),totalVis=0;
+        var cats=main.querySelectorAll('.idx-cat');
+        cats.forEach(function(cat){
+            var grid=cat.nextElementSibling,cards=grid.querySelectorAll('.idx-card'),vis=0;
+            cards.forEach(function(c){var t=c.querySelector('.idx-title').textContent.toLowerCase();var show=!q||t.indexOf(q)!==-1;c.style.display=show?'':'none';if(show)vis++;});
+            cat.style.display=vis?'':'none';grid.style.display=vis?'':'none';totalVis+=vis;
+        });
+        nr.style.display=totalVis===0?'block':'none';
+    });
+    var stBtn=document.getElementById('scrollTop');
+    window.addEventListener('scroll',function(){stBtn.classList.toggle('visible',window.scrollY>300);});
+    stBtn.onclick=function(){window.scrollTo({top:0,behavior:'smooth'});};
+})();
+</script>
+</body>
+</html>

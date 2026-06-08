@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction to Hash Maps and Sets - Coding Interview Patterns</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.8; color: #1a1a1a;
+    max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem; background: #fff;
+  }
+  h1 { font-size: 2rem; margin: 1.5rem 0 1rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h2 { font-size: 1.6rem; margin: 1.8rem 0 0.8rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h3 { font-size: 1.3rem; margin: 1.5rem 0 0.6rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h4, h5, h6 { margin: 1.2rem 0 0.5rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  p { margin: 0.8rem 0; }
+  img { max-width: 100%; height: auto; margin: 1rem 0; border-radius: 4px; }
+  pre { background: #f5f5f5; padding: 1rem; border-radius: 6px; overflow-x: auto; margin: 1rem 0; font-size: 0.9rem; }
+  code { background: #f0f0f0; padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  ul, ol { margin: 0.8rem 0; padding-left: 2rem; }
+  li { margin: 0.3rem 0; }
+  blockquote { border-left: 4px solid #10b981; padding: 0.5rem 1rem; margin: 1rem 0; background: #f0fdf4; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5rem 0.75rem; text-align: left; }
+  th { background: #f5f5f5; font-weight: 600; }
+  hr { border: none; border-top: 1px solid #e5e5e5; margin: 2rem 0; }
+  .breadcrumb {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; color: #666; margin-bottom: 1.5rem;
+    padding-bottom: 1rem; border-bottom: 1px solid #e5e5e5;
+  }
+  .breadcrumb a { color: #10b981; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .nav-footer {
+    margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e5e5e5;
+    display: flex; justify-content: space-between;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.9rem;
+  }
+  .nav-footer a { color: #10b981; text-decoration: none; }
+  .nav-footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="breadcrumb">
+  <a href="../index.html">All Courses</a> &rsaquo; <a href="index.html">Coding Interview Patterns</a> &rsaquo; Introduction to Hash Maps and Sets
+</div>
+<h2 id="intuition">Intuition</h2>
+<p>Picture working in a grocery store. A customer asks for the price of a fruit. If you just have a paper list of all the fruits, you would need to look through it to find the specific fruit, which can be time-consuming. However, by memorizing the list, you can know the prices of all fruits instantly, enabling you to promptly give the correct price to the customer. This is similar to how hash maps work, enabling quick access to information.</p>
+<p><strong>Hash maps</strong><br/>
+A hash map – also known as a hash table or dictionary, depending on the language – is a data structure that pairs keys with values. Let's illustrate this using the example of fruits and their prices:</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a simple data mapping or lookup table illustrating a price list for fruits.  The table is implicitly structured with two columns: 'Fruit' on the left and 'Price' on the right.  Three rows represent individual fruit items.  The 'Fruit' column lists the items: 'apple', 'bananas', and 'carrot', each written in a monospace font.  The 'Price' column displays the corresponding prices: 5.00, 4.50, and 2.75 respectively, also in a monospace font.  A grey horizontal arrow connects each fruit item in the left column to its associated price in the right column, visually representing the mapping between fruit and its price.  The overall arrangement suggests a straightforward key-value relationship, where the fruit name acts as the key and the price as the value." data-nimg="1" height="90" src="images/img-f3442bd98cc8.svg" style="color: transparent;" width="234"/></div></figure>
+<p>Having a mental map of fruit prices is conceptually similar to being able to instantly access fruit prices using a hash map, where the fruit name is the key, and its price is the value. When we look up a price using the fruit's name as the key, the hash map will immediately return its price:</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a simple hashmap data structure, visually depicted as a table.  The table is labeled 'hashmap' at the top.  It consists of two columns: a 'key' column and a 'value' column. The key column contains string values representing fruit and vegetable names: 'apple,' 'bananas,' and 'carrot.'  The value column contains corresponding floating-point numbers representing numerical values, likely prices: 5.00, 4.50, and 2.75 respectively.  Each key-value pair is implicitly linked; for example, 'apple' is associated with 5.00.  The arrangement shows a direct mapping between keys and values, illustrating the fundamental principle of a hashmap:  efficiently storing and retrieving data based on a unique key.  The labels 'key' and 'value' at the bottom clarify the role of each column." data-nimg="1" height="127" src="images/img-f45ab136c32f.svg" style="color: transparent;" width="143"/></div></figure>
+<p>Hash maps are incredibly efficient for lookups, insertions, and deletions, as they typically perform these operations in constant time: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span>. They are one of the most versatile, widely-used data structures in computer science, used for tasks such as counting the frequency of elements, caching data, and more.</p>
+<p>Properties of hash maps:</p>
+<ul>
+<li>
+<p>Data is stored in the form of key-value pairs.</p>
+</li>
+<li>
+<p>Hash maps don't store duplicates. Every key in a hash map is unique, ensuring each value can be distinctly identified and accessed.</p>
+</li>
+<li>
+<p>Hash maps are unordered data structures, meaning keys are not stored in any specific order.</p>
+</li>
+</ul>
+<p><strong>Time complexity breakdown</strong><br/>
+Below, n denotes the number of entries in the hash map.</p>
+<div class="table-wrap" style="--table-min-width: 640px;"><table><thead><tr><th>Operation</th><th style="text-align: center;">Average case</th><th style="text-align: center;">Worst case</th><th style="text-align: left;">Description</th></tr></thead><tbody><tr><td>Insert</td><td style="text-align: center;"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></td><td style="text-align: center;"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span></td><td style="text-align: left;">Add a key-value pair to the hash map.</td></tr><tr><td>Access</td><td style="text-align: center;"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></td><td style="text-align: center;"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span></td><td style="text-align: left;">Find or retrieve an element.</td></tr><tr><td>Delete</td><td style="text-align: center;"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></td><td style="text-align: center;"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span></td><td style="text-align: left;">Delete a key-value pair.</td></tr></tbody></table></div>
+<p> </p>
+<p><strong>In coding interviews, we generally consider hash map operations to have a fast average time complexity of</strong> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span>, as opposed to their worst-case complexities. This is based on the assumption that an efficient hash function minimizes collisions [HashCollision]. However, in the worst-case scenario where a poorly optimized hash function results in frequent collisions, the time complexity can deteriorate to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span>, necessitating a linear search through all entries.</p>
+<p><strong>Hash sets</strong><br/>
+Hash sets are a simpler form of hash maps. Instead of storing key-value pairs, they store only the keys. Using the grocery store analogy, a hash set is like having a mental checklist of fruits without their prices. It's useful for quickly checking the presence or absence of an item, like checking whether a particular fruit is in stock.</p>
+<p><strong>When to use hash maps or sets</strong><br/>
+Common use cases of hash maps include implementing dictionaries, counting frequencies, storing key-value pairs, and handling scenarios requiring quick lookups.</p>
+<p>Common use cases of hash sets include storing unique elements, marking elements as used or visited, and checking for duplicates.</p>
+<p>In the description of a problem, pay attention to keywords like "frequency", "unique", "map", "dictionary", or "fast lookup", because these often indicate that hash maps or sets could be useful.</p>
+<p><strong>Essential concepts for mastering hash maps and sets</strong><br/>
+This chapter discusses the practical uses of hash maps and sets. For a more complete understanding of how they work and why they're so efficient, please explore topics that go beyond the scope of this chapter, such as:</p>
+<ul>
+<li>
+<p>Hash functions: explore the intricacies of how keys are mapped to specific values in a hash table <a href="https://en.wikipedia.org/wiki/Hash_function" rel="noopener noreferrer" target="_blank">[1]</a>.</p>
+</li>
+<li>
+<p>Collision and collision-handling techniques: understand methods like chaining, or open addressing for resolving hash collisions <a href="https://en.wikipedia.org/wiki/Hash_collision" rel="noopener noreferrer" target="_blank">[2]</a>.</p>
+</li>
+<li>
+<p>Load factors and rehashing: these make it easier to understand how hash tables grow and change size <a href="https://www.scaler.com/topics/data-structures/load-factor-and-rehashing/" rel="noopener noreferrer" target="_blank">[3]</a>.</p>
+</li>
+</ul>
+<h2 id="real-world-example">Real-world Example</h2>
+<p><strong>Web browser cache</strong>: Hash maps and sets are used everywhere in real-world systems. A classic example of hash maps in action is in caching systems within web browsers. When you visit a website, your browser stores data such as images, HTML, and CSS files in a cache so it can load much faster on future visits.</p>
+<h2 id="chapter-outline">Chapter Outline</h2>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a hierarchical diagram illustrating the application of Hash Maps and Sets in coding.  A rounded rectangle at the top, labeled 'Hash Maps and Sets,' serves as the root node.  From this root, a dashed line extends downwards, branching into two separate rectangular boxes with dashed borders. The left box is titled 'Hash maps' and lists three example applications: 'Pair Sum,' 'Unsorted,' and 'Geometric Sequence Triplets.' The right box is titled 'Hash sets' and lists three different applications: 'Verify Sudoku Board,' 'Zero Striping,' and 'Longest Chain of Consecutive Numbers.'  The arrangement shows that 'Hash Maps and Sets' is a broader category encompassing the specific use cases detailed under 'Hash maps' and 'Hash sets,' indicating how these data structures are employed in solving various coding problems." data-nimg="1" height="246" src="images/img-6ec221b0c153.svg" style="color: transparent;" width="472"/></div></figure>
+<p>This chapter includes problems involving the most popular use cases of hash maps and sets, aiming to improve your understanding and effectiveness in utilizing them.</p>
+<div class="nav-footer">
+  <span><a href="06-next-lexicographical-sequence.html">Prev</a></span>
+  <span><a href="08-pair-sum---unsorted.html">Next</a></span>
+</div>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Interview Preparation Hub</title>
+<script>if(localStorage.getItem('theme')==='dark')document.documentElement.classList.add('dark');</script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--text); min-height: 100vh;
+    display: flex; flex-direction: column;
+    transition: background 0.3s, color 0.3s;
+}
+:root {
+    --bg: #f5f5f5; --text: #333; --card-bg: #fff; --card-shadow: rgba(0,0,0,0.06);
+    --card-hover-shadow: rgba(0,0,0,0.1); --muted: #666; --meta: #999;
+    --border: #e8e8e8; --search-bg: rgba(255,255,255,0.15);
+}
+html.dark {
+    --bg: #121212; --text: #e0e0e0; --card-bg: #1e1e2e; --card-shadow: rgba(0,0,0,0.3);
+    --card-hover-shadow: rgba(0,0,0,0.5); --muted: #aaa; --meta: #777;
+    --border: #2a2a3a; --search-bg: rgba(255,255,255,0.1);
+}
+.hub-header {
+    background: #1a1a2e; color: #fff; padding: 48px 24px 40px; text-align: center;
+    position: relative;
+}
+.hub-header h1 { font-size: 2.4em; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
+.hub-header p { font-size: 1.1em; color: rgba(255,255,255,0.65); max-width: 520px; margin: 0 auto; }
+.hub-search {
+    max-width: 420px; margin: 24px auto 0; position: relative;
+}
+.hub-search input {
+    width: 100%; padding: 12px 18px 12px 42px; border: none; border-radius: 10px;
+    background: var(--search-bg); color: #fff; font-size: 15px;
+    outline: none; font-family: inherit;
+}
+.hub-search input::placeholder { color: rgba(255,255,255,0.45); }
+.hub-search-icon {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    color: rgba(255,255,255,0.4); font-size: 16px; pointer-events: none;
+}
+.theme-toggle {
+    position: absolute; top: 16px; right: 20px;
+    background: rgba(255,255,255,0.12); border: none; color: #fff;
+    width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+    font-size: 18px; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+}
+.theme-toggle:hover { background: rgba(255,255,255,0.22); }
+.hub-main { max-width: 960px; margin: 0 auto; padding: 40px 24px; flex: 1; width: 100%; }
+.hub-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.hub-no-results {
+    display: none; grid-column: 1 / -1; text-align: center;
+    padding: 40px; color: var(--meta); font-size: 15px;
+}
+.hub-card {
+    display: flex; flex-direction: column; justify-content: space-between;
+    background: var(--card-bg); border-radius: 14px; padding: 32px 28px;
+    text-decoration: none; color: var(--text);
+    box-shadow: 0 2px 8px var(--card-shadow);
+    transition: box-shadow 0.25s, transform 0.25s, background 0.3s;
+    border-top: 4px solid transparent;
+    position: relative; overflow: hidden;
+}
+.hub-card:hover { box-shadow: 0 8px 28px var(--card-hover-shadow); transform: translateY(-4px); }
+.hub-card-accent { position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+.hub-icon {
+    width: 52px; height: 52px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; margin-bottom: 18px; color: #fff;
+}
+.hub-card-title { font-size: 1.3em; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+.hub-card-desc { font-size: 0.92em; color: var(--muted); line-height: 1.55; margin-bottom: 18px; }
+.hub-card-meta { display: flex; align-items: center; gap: 8px; font-size: 0.82em; color: var(--meta); font-weight: 500; }
+.hub-chip { padding: 4px 10px; border-radius: 20px; font-size: 0.78em; font-weight: 600; color: #fff; }
+.hub-arrow { margin-left: auto; font-size: 18px; color: var(--meta); transition: transform 0.2s, color 0.2s; }
+.hub-card:hover .hub-arrow { transform: translateX(4px); color: var(--text); }
+.c-sd .hub-card-accent, .c-sd .hub-icon, .c-sd .hub-chip { background: #35ddac; }
+.c-ga .hub-card-accent, .c-ga .hub-icon, .c-ga .hub-chip { background: #8b5cf6; }
+.c-ms .hub-card-accent, .c-ms .hub-icon, .c-ms .hub-chip { background: #f59e0b; }
+.c-rw .hub-card-accent, .c-rw .hub-icon, .c-rw .hub-chip { background: #ec4899; }
+.c-cp .hub-card-accent, .c-cp .hub-icon, .c-cp .hub-chip { background: #3b82f6; }
+.c-ood .hub-card-accent, .c-ood .hub-icon, .c-ood .hub-chip { background: #f97316; }
+.c-ml .hub-card-accent, .c-ml .hub-icon, .c-ml .hub-chip { background: #06b6d4; }
+.hub-footer {
+    text-align: center; padding: 28px 24px; color: var(--meta); font-size: 13px;
+    border-top: 1px solid var(--border); transition: border-color 0.3s;
+}
+.scroll-top {
+    position: fixed; bottom: 28px; right: 28px; width: 44px; height: 44px;
+    border-radius: 50%; border: none; background: #1a1a2e; color: #fff;
+    font-size: 20px; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+    opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s, transform 0.2s;
+    z-index: 1000;
+}
+.scroll-top.visible { opacity: 1; visibility: visible; }
+.scroll-top:hover { transform: scale(1.1); }
+@media screen and (max-width: 700px) {
+    .hub-grid { grid-template-columns: 1fr; gap: 16px; }
+    .hub-header { padding: 40px 16px 32px; }
+    .hub-header h1 { font-size: 1.7em; }
+    .hub-main { padding: 24px 16px; }
+    .hub-card { padding: 24px 20px; }
+    .hub-card-title { font-size: 1.15em; }
+    .theme-toggle { top: 12px; right: 12px; width: 36px; height: 36px; font-size: 16px; }
+}
+@media screen and (max-width: 400px) {
+    .hub-header h1 { font-size: 1.4em; }
+    .hub-card { padding: 20px 16px; }
+}
+</style>
+</head>
+<body>
+<div class="hub-header">
+    <button class="theme-toggle" id="themeToggle" title="Toggle dark mode">&#9790;</button>
+    <h1>Interview Preparation</h1>
+    <p>Your complete study hub &mdash; pick a track and start learning</p>
+    <div class="hub-search">
+        <span class="hub-search-icon">&#128269;</span>
+        <input type="text" id="hubSearch" placeholder="Search sections..." autocomplete="off">
+    </div>
+</div>
+<main class="hub-main">
+<div class="hub-grid" id="hubGrid">
+<a href="System-design/index.html" class="hub-card c-sd">
+    <div class="hub-card-accent"></div>
+    <div>
+        <div class="hub-icon">&#9881;</div>
+        <div class="hub-card-title">System Design</div>
+        <div class="hub-card-desc">Fundamentals to advanced distributed systems &mdash; URL shorteners, chat systems, payment platforms, and more.</div>
+    </div>
+    <div class="hub-card-meta">
+        <span class="hub-chip">29 chapters</span>
+        <span>5 categories</span>
+        <span class="hub-arrow">&rarr;</span>
+    </div>
+</a>
+<a href="GenAI-Interview/index.html" class="hub-card c-ga">
+    <div class="hub-card-accent"></div>
+    <div>
+        <div class="hub-icon">&#10024;</div>
+        <div class="hub-card-title">GenAI Interview</div>
+        <div class="hub-card-desc">Generative AI system design &mdash; text, image, and video generation models for ML interviews.</div>
+    </div>
+    <div class="hub-card-meta">
+        <span class="hub-chip">11 chapters</span>
+        <span>4 categories</span>
+        <span class="hub-arrow">&rarr;</span>
+    </div>
+</a>
+<a href="Mobile%20System%20Design/index.html" class="hub-card c-ms">
+    <div class="hub-card-accent"></div>
+    <div>
+        <div class="hub-icon">&#128241;</div>
+        <div class="hub-card-title">Mobile System Design</div>
+        <div class="hub-card-desc">Mobile architecture patterns, building blocks, and app design case studies for mobile SD interviews.</div>
+    </div>
+    <div class="hub-card-meta">
+        <span class="hub-chip">11 chapters</span>
+        <span>3 categories</span>
+        <span class="hub-arrow">&rarr;</span>
+    </div>
+</a>
+<a href="Resume-writing/index.html" class="hub-card c-rw">
+    <div class="hub-card-accent"></div>
+    <div>
+        <div class="hub-icon">&#128196;</div>
+        <div class="hub-card-title">Resume Writing</div>
+        <div class="hub-card-desc">Craft a standout tech resume &mdash; structure, templates, examples, and common mistakes to avoid.</div>
+    </div>
+    <div class="hub-card-meta">
+        <span class="hub-chip">19 chapters</span>
+        <span>5 categories</span>
+        <span class="hub-arrow">&rarr;</span>
+    </div>
+</a>
+<a href="Coding-Patterns/index.html" class="hub-card c-cp">
+    <div class="hub-card-accent"></div>
+    <div>
+        <div class="hub-icon">&#128187;</div>
+        <div class="hub-card-title">Coding Interview Patterns</div>
+        <div class="hub-card-desc">120 problems across 18 patterns &mdash; two pointers, sliding windows, trees, graphs, DP, and more.</div>
+    </div>
+    <div class="hub-card-meta">
+        <span class="hub-chip">120 problems</span>
+        <span>18 categories</span>
+        <span class="hub-arrow">&rarr;</span>
+    </div>
+</a>
+<a href="Object-Oriented-Design/index.html" class="hub-card c-ood">
+    <div class="hub-card-accent"></div>
+    <div>
+        <div class="hub-icon">&#128230;</div>
+        <div class="hub-card-title">Object-Oriented Design</div>
+        <div class="hub-card-desc">OOD interview framework, OOP fundamentals, and 11 real-world design problems with solutions.</div>
+    </div>
+    <div class="hub-card-meta">
+        <span class="hub-chip">14 chapters</span>
+        <span>2 categories</span>
+        <span class="hub-arrow">&rarr;</span>
+    </div>
+</a>
+<a href="ML-System-Design/index.html" class="hub-card c-ml">
+    <div class="hub-card-accent"></div>
+    <div>
+        <div class="hub-icon">&#129302;</div>
+        <div class="hub-card-title">ML System Design</div>
+        <div class="hub-card-desc">Design production ML systems &mdash; visual search, recommendations, content moderation, and ranking.</div>
+    </div>
+    <div class="hub-card-meta">
+        <span class="hub-chip">11 chapters</span>
+        <span>4 categories</span>
+        <span class="hub-arrow">&rarr;</span>
+    </div>
+</a>
+<div class="hub-no-results" id="hubNoResults">No sections match your search.</div>
+</div>
+</main>
+<div class="hub-footer">Interview Preparation Study Hub</div>
+<button class="scroll-top" id="scrollTop" title="Scroll to top">&#8593;</button>
+<script>
+(function(){
+    var tog=document.getElementById('themeToggle');
+    function applyIcon(){tog.innerHTML=document.documentElement.classList.contains('dark')?'&#9788;':'&#9790;';}
+    applyIcon();
+    tog.onclick=function(){
+        document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');
+        applyIcon();
+    };
+    var input=document.getElementById('hubSearch'),cards=document.querySelectorAll('.hub-card'),nr=document.getElementById('hubNoResults');
+    input.addEventListener('input',function(){
+        var q=this.value.toLowerCase().trim(),vis=0;
+        cards.forEach(function(c){
+            var t=(c.querySelector('.hub-card-title').textContent+' '+c.querySelector('.hub-card-desc').textContent).toLowerCase();
+            var show=!q||t.indexOf(q)!==-1;
+            c.style.display=show?'':'none';
+            if(show)vis++;
+        });
+        nr.style.display=vis===0?'block':'none';
+    });
+    var stBtn=document.getElementById('scrollTop');
+    window.addEventListener('scroll',function(){stBtn.classList.toggle('visible',window.scrollY>300);});
+    stBtn.onclick=function(){window.scrollTo({top:0,behavior:'smooth'});};
+})();
+</script>
+</body>
+</html>

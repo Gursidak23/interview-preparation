@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Palindromic Linked List - Coding Interview Patterns</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.8; color: #1a1a1a;
+    max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem; background: #fff;
+  }
+  h1 { font-size: 2rem; margin: 1.5rem 0 1rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h2 { font-size: 1.6rem; margin: 1.8rem 0 0.8rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h3 { font-size: 1.3rem; margin: 1.5rem 0 0.6rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h4, h5, h6 { margin: 1.2rem 0 0.5rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  p { margin: 0.8rem 0; }
+  img { max-width: 100%; height: auto; margin: 1rem 0; border-radius: 4px; }
+  pre { background: #f5f5f5; padding: 1rem; border-radius: 6px; overflow-x: auto; margin: 1rem 0; font-size: 0.9rem; }
+  code { background: #f0f0f0; padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  ul, ol { margin: 0.8rem 0; padding-left: 2rem; }
+  li { margin: 0.3rem 0; }
+  blockquote { border-left: 4px solid #10b981; padding: 0.5rem 1rem; margin: 1rem 0; background: #f0fdf4; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5rem 0.75rem; text-align: left; }
+  th { background: #f5f5f5; font-weight: 600; }
+  hr { border: none; border-top: 1px solid #e5e5e5; margin: 2rem 0; }
+  .breadcrumb {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; color: #666; margin-bottom: 1.5rem;
+    padding-bottom: 1rem; border-bottom: 1px solid #e5e5e5;
+  }
+  .breadcrumb a { color: #10b981; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .nav-footer {
+    margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e5e5e5;
+    display: flex; justify-content: space-between;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.9rem;
+  }
+  .nav-footer a { color: #10b981; text-decoration: none; }
+  .nav-footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="breadcrumb">
+  <a href="../index.html">All Courses</a> &rsaquo; <a href="index.html">Coding Interview Patterns</a> &rsaquo; Palindromic Linked List
+</div>
+<div class="style_problemDescription__T4cPe"><p>Given the head of a singly linked list, determine if it's a palindrome.</p><h4 id="example-1">Example 1:</h4><figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a directed graph illustrating a sequence of states or steps.  Five circular nodes, labeled sequentially from 1 to 5, are arranged horizontally. Each node contains a single digit representing a state.  Directed edges, represented by arrows, connect the nodes, indicating the flow of information or progression through the sequence. The arrows point from node 1 to node 2, from node 2 to node 3, from node 3 to node 4 (which is also labeled 2), and finally from node 4 to node 5 (which is labeled 1).  This suggests a cyclical pattern where the sequence starts with state 1, progresses through states 2 and 3, then returns to state 2 before finally returning to the initial state 1.  The repetition of states 2 and 1 highlights a potential loop or recurring pattern within the overall process." data-nimg="1" height="32" src="images/img-fcee54b561de.svg" style="color: transparent;" width="350"/></div></figure><pre><code class="hljs language-python">Output: <span class="hljs-literal">True</span>
+</code></pre><h4 id="example-2">Example 2:</h4><figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a directed graph illustrating a sequence of operations or states.  The graph consists of four circular nodes, each containing a single digit: '1', '2', '1', and '2'.  These nodes are connected by directed edges, represented by arrows.  The first node, containing '1', is connected to the second node ('2') via a directed edge pointing from '1' to '2'.  Similarly, the second node ('2') connects to the third node ('1'), and the third node ('1') connects to the fourth node ('2'), each connection represented by a directed edge showing the flow from left to right.  The arrangement suggests a pattern of alternating '1' and '2' states or operations, with the information flow unidirectional from left to right." data-nimg="1" height="32" src="images/img-4178521d6964.svg" style="color: transparent;" width="288"/></div></figure><pre><code class="hljs language-python">Output: <span class="hljs-literal">False</span>
+</code></pre></div>
+<h2 id="intuition">Intuition</h2>
+<p>A linked list would be palindromic if its values read the same forward and backward. A naive way to check this would be to store all the values of the linked list in an array, allowing us to freely traverse these values forward and backward to confirm if it’s palindromic. However, this takes linear space. Instead, it would be better if we had a way to traverse the linked list in reverse order to confirm if it's a palindrome. Is there a way to go about this?</p>
+<p>Going off the above definition, we know that if a linked list is a palindrome, reversing it would result in the same sequence of values.</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents two linked lists displayed horizontally.  The top list, labeled 'linked list:', shows a sequence of nodes containing the values 1, 2, 3, 2, and 1, connected by rightward-pointing arrows indicating the direction of traversal. The bottom list, labeled 'reversed linked list:', displays the same numerical values (1, 2, 3, 2, 1) but in reverse order, connected by leftward-pointing arrows.  A horizontal orange arrow connects the ends of both lists, labeled 'same sequence of values,' highlighting that both lists contain the identical numerical sequence, but in opposite directions, demonstrating the concept of reversing a linked list." data-nimg="1" height="140" src="images/img-872f4d364386.svg" style="color: transparent;" width="541"/></div></figure>
+<p>This means we could create a copy of the linked list, reverse it, and compare its values with the original linked list. However, this would still take up linear space. Can we adjust this idea to avoid creating a new linked list?</p>
+<p>An important observation is that we only need to <strong>compare the first half of the original linked list with the reverse of the second half</strong> (if there are an odd number of elements, we can just include the middle node in both halves) to check if the linked list is a palindrome:</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a diagram illustrating a palindrome checking algorithm.  Five circular nodes, numbered sequentially 1, 2, 3, 2, 1, are arranged linearly and connected by unidirectional arrows.  The arrows indicate the flow of data.  Nodes 1 and 2 are connected by an arrow pointing from 1 to 2, representing the processing of the first half of the input. Node 2 is connected to node 3, also with an arrow pointing from 2 to 3, continuing the processing of the first half. A grey line segment above nodes 1, 2, and 3 is labeled 'compare first half'.  Node 3 is connected to node 2 by an arrow pointing from 2 to 3, and node 2 is connected to node 1 by an arrow pointing from 1 to 2, representing the reversed processing of the second half. A grey line segment below nodes 3, 2, and 1 is labeled 'with reverse of second half'. The overall structure shows a comparison between the first half of a sequence and the reversed second half to determine if it's a palindrome." data-nimg="1" height="131" src="images/img-cc9d41313158.svg" style="color: transparent;" width="374"/></div></figure>
+<hr/>
+<p>Before we can perform this comparison, we need to:</p>
+<ol>
+<li>Find the middle of the linked list to get the head of the second half.</li>
+<li>Reverse the second half of the linked list from this middle node.</li>
+</ol>
+<p>Notice that step 2 involves modifying the input. In this problem, let’s assume this is acceptable. However, <strong>it's always good to check with the interviewer if changing the input is allowed before moving forward with the solution</strong>.</p>
+<p>Now, let’s see how these two steps can be applied. Start by obtaining the middle node (<code>mid</code>) of the linked list.</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a linked list data structure with five nodes.  Each node is depicted as a circle containing a numerical value (1, 2, 3, 2, 1).  Arrows indicate the directional links between nodes, showing the sequence of the list.  A gray rectangular box labeled 'head' points to the first node (containing the value 1), representing the starting point of the list.  Separately, an orange rectangular box labeled 'mid' points to the third node (containing the value 3), highlighting a specific node within the list.  The arrangement visually demonstrates the linear progression of elements in a linked list, with the 'head' and 'mid' labels indicating pointers to specific locations within that sequence." data-nimg="1" height="75" src="images/img-e1258719f4b8.svg" style="color: transparent;" width="355"/></div></figure>
+<p>To learn how to get to the middle of a linked list, read the explanation in the <em>Linked List Midpoint</em> problem in the <em>Fast and Slow Pointers</em> chapter.</p>
+<hr/>
+<p>Then, reverse the second half of the linked list starting at <code>mid</code>. The last node of the original linked list becomes the head of the second half. This second head is used to traverse the newly reversed second half.</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a diagram illustrating a linked list data structure with two separate heads.  The first head, labeled 'head' in a gray rectangle, points to a node containing the number '1'. This node is connected via a black arrow to a node containing '2', which is further connected to a node containing '3' by another black arrow. A second head, labeled 'mid' in a gray rectangle, points to the node containing '3'.  Separately, a third head, labeled 'second_head' in an orange rectangle, points to a node containing '1'. This node is connected to a node containing '2' via a light-blue arrow pointing left, indicating a connection in the opposite direction compared to the first sequence.  The overall structure shows two distinct linked lists, one progressing from '1' to '3' and the other starting from '1' and connecting to '2' in reverse order, sharing some nodes but with different starting points and directions of traversal." data-nimg="1" height="75" src="images/img-9f6fde3ab2c0.svg" style="color: transparent;" width="387"/></div></figure>
+<p>To learn how to reverse a linked list in <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> time, read the explanation in the <em>Reverse Linked List</em> problem in this chapter.</p>
+<hr/>
+<p>The last thing we need to do is check if the first half matches the now-reversed second half. We can do this by simultaneously traversing both halves node by node, and comparing each node from the first half to the corresponding node from the second half. If at any point the node values don't match, it indicates the linked list is not a palindrome.</p>
+<p>We can use two pointers (<code>ptr1</code> and <code>ptr2</code>) to iterate through the first and the reversed second half of the linked list, respectively:</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a linked list data structure with two pointers, `ptr1` and `ptr2`, manipulating its nodes.  The list consists of five nodes, numbered 1, 2, 3, 2, and 1, sequentially connected by solid arrows indicating the primary list order. A rectangular box labeled 'head' points to the first node (1), establishing the beginning of the list.  Another rectangular box labeled 'second_head' points to the last node (1), suggesting a second entry point.  Dashed orange arrows show additional connections: `ptr1` points to node 3, and `ptr2` points to node 3.  Furthermore, dashed orange arrows illustrate a secondary, non-sequential connection from node 1 to node 2, and from node 2 to node 3, and from node 2 to node 1, indicating a potential circular or rearranged structure within the list, possibly created or modified by the pointers." data-nimg="1" height="130" src="images/img-047d4c5a089a.svg" style="color: transparent;" width="401"/></div></figure>
+<h2 id="implementation">Implementation</h2>
+<div class="style_codeTabsWrap__jMkKK"><div class="ant-tabs ant-tabs-top ant-tabs-card style_codeTabs__DEEq6 css-133v4sd"><div aria-orientation="horizontal" class="ant-tabs-nav" role="tablist"><div class="ant-tabs-nav-wrap"><div class="ant-tabs-nav-list" style="transform: translate(0px, 0px);"><div class="ant-tabs-tab ant-tabs-tab-active" data-node-key="0"><div aria-controls="rc-tabs-0-panel-0" aria-selected="true" class="ant-tabs-tab-btn" id="rc-tabs-0-tab-0" role="tab" tabindex="0">Python</div></div><div class="ant-tabs-tab" data-node-key="1"><div aria-controls="rc-tabs-0-panel-1" aria-selected="false" class="ant-tabs-tab-btn" id="rc-tabs-0-tab-1" role="tab" tabindex="-1">JavaScript</div></div><div class="ant-tabs-tab" data-node-key="2"><div aria-controls="rc-tabs-0-panel-2" aria-selected="false" class="ant-tabs-tab-btn" id="rc-tabs-0-tab-2" role="tab" tabindex="-1">Java</div></div><div class="ant-tabs-ink-bar ant-tabs-ink-bar-animated" style="width: 76.75px; left: 38.375px; transform: translateX(-50%);"></div></div></div><div class="ant-tabs-nav-operations ant-tabs-nav-operations-hidden"></div></div><div class="ant-tabs-content-holder"><div class="ant-tabs-content ant-tabs-content-top"><div aria-hidden="false" aria-labelledby="rc-tabs-0-tab-0" class="ant-tabs-tabpane ant-tabs-tabpane-active" id="rc-tabs-0-panel-0" role="tabpanel" tabindex="0"><pre><code class="hljs language-python"><span class="hljs-keyword">from</span> ds <span class="hljs-keyword">import</span> ListNode
+    
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">palindromic_linked_list</span>(<span class="hljs-params">head: ListNode</span>) -&gt; <span class="hljs-built_in">bool</span>: 
+    <span class="hljs-comment"># Find the middle of the linked list and then reverse the second half of the # linked list starting at this midpoint.</span>
+    mid = find_middle(head)
+    second_head = reverse_list(mid)
+    <span class="hljs-comment"># Compare the first half and the reversed second half of the list</span>
+    ptr1, ptr2 = head, second_head
+    res = <span class="hljs-literal">True</span>
+    <span class="hljs-keyword">while</span> ptr2:
+        <span class="hljs-keyword">if</span> ptr1.val != ptr2.val:
+            res = <span class="hljs-literal">False</span>
+        ptr1, ptr2 = ptr1.<span class="hljs-built_in">next</span>, ptr2.<span class="hljs-built_in">next</span>
+    <span class="hljs-keyword">return</span> res
+    
+<span class="hljs-comment"># From the 'Reverse Linked List' problem.</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">reverse_list</span>(<span class="hljs-params">head: ListNode</span>) -&gt; ListNode:
+    prevNode, currNode = <span class="hljs-literal">None</span>, head
+    <span class="hljs-keyword">while</span> currNode:
+        nextNode = currNode.<span class="hljs-built_in">next</span>
+        currNode.<span class="hljs-built_in">next</span> = prevNode
+        prevNode = currNode
+        currNode = nextNode
+    <span class="hljs-keyword">return</span> prevNode
+    
+<span class="hljs-comment"># From the 'Linked List Midpoint' problem.</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">find_middle</span>(<span class="hljs-params">head: ListNode</span>) -&gt; ListNode:
+    slow = fast = head
+    <span class="hljs-keyword">while</span> fast <span class="hljs-keyword">and</span> fast.<span class="hljs-built_in">next</span>:
+        slow = slow.<span class="hljs-built_in">next</span>
+        fast = fast.<span class="hljs-built_in">next</span>.<span class="hljs-built_in">next</span>
+    <span class="hljs-keyword">return</span> slow
+</code></pre></div></div></div></div></div>
+<h3 id="complexity-analysis">Complexity Analysis</h3>
+<p><strong>Time complexity:</strong> The time complexity of <code>palindromic_linked_list</code> is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span>, where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> denotes the length of the linked list. This is because it involves iterating through the linked list three times: once to find the middle node, once to reverse the second half, and once more to compare the two halves.</p>
+<p><strong>Space complexity:</strong> The space complexity is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span>.</p>
+<h2 id="interview-tip">Interview Tip</h2>
+<p>Tip: Confirm if it’s acceptable to modify the linked list. In our solution, we reversed the second half of the linked list which dismantled the input’s initial structure. Why does this matter? Oftentimes, the input data structure should not be modified, particularly if it's shared or accessed concurrently. As such, it’s important to confirm with your interviewer whether input modification is acceptable and to briefly address the implications of this.</p>
+<div class="nav-footer">
+  <span><a href="17-lru-cache.html">Prev</a></span>
+  <span><a href="19-flatten-a-multi-level-linked-list.html">Next</a></span>
+</div>
+</body>
+</html>

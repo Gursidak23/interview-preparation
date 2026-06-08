@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction to Greedy Algorithms - Coding Interview Patterns</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.8; color: #1a1a1a;
+    max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem; background: #fff;
+  }
+  h1 { font-size: 2rem; margin: 1.5rem 0 1rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h2 { font-size: 1.6rem; margin: 1.8rem 0 0.8rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h3 { font-size: 1.3rem; margin: 1.5rem 0 0.6rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h4, h5, h6 { margin: 1.2rem 0 0.5rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  p { margin: 0.8rem 0; }
+  img { max-width: 100%; height: auto; margin: 1rem 0; border-radius: 4px; }
+  pre { background: #f5f5f5; padding: 1rem; border-radius: 6px; overflow-x: auto; margin: 1rem 0; font-size: 0.9rem; }
+  code { background: #f0f0f0; padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  ul, ol { margin: 0.8rem 0; padding-left: 2rem; }
+  li { margin: 0.3rem 0; }
+  blockquote { border-left: 4px solid #10b981; padding: 0.5rem 1rem; margin: 1rem 0; background: #f0fdf4; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5rem 0.75rem; text-align: left; }
+  th { background: #f5f5f5; font-weight: 600; }
+  hr { border: none; border-top: 1px solid #e5e5e5; margin: 2rem 0; }
+  .breadcrumb {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; color: #666; margin-bottom: 1.5rem;
+    padding-bottom: 1rem; border-bottom: 1px solid #e5e5e5;
+  }
+  .breadcrumb a { color: #10b981; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .nav-footer {
+    margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e5e5e5;
+    display: flex; justify-content: space-between;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.9rem;
+  }
+  .nav-footer a { color: #10b981; text-decoration: none; }
+  .nav-footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="breadcrumb">
+  <a href="../index.html">All Courses</a> &rsaquo; <a href="index.html">Coding Interview Patterns</a> &rsaquo; Introduction to Greedy Algorithms
+</div>
+<h2 id="intuition">Intuition</h2>
+<p>Greedy algorithms are a class of algorithms that make a series of decisions, where each decision is the best immediate choice given the options available. To understand this, let’s dive into an analogy.</p>
+<p>Imagine you're planning a road trip from city A to city E, and you want to visit cities B, C, and D along the way:</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a weighted graph, a network diagram showing five nodes (A, B, C, D, E) labeled in orange, interconnected by edges representing travel times in minutes.  Node A connects to node B with three edges showing travel times of 40, 30, and 20 minutes respectively, and another edge to B with a travel time of 30 minutes. Node B connects to node C with edges of 15 and 20 minutes. Node C connects to node D with edges of 30 and 50 minutes. Node D connects to node E with edges of 30 and 35 minutes.  Node D also has an edge to node C with a travel time of 25 minutes.  All edges are unidirectional, implying travel time may vary in the opposite direction (not shown).  The numbers on the edges represent the time taken to traverse that specific connection between the nodes." data-nimg="1" height="224" src="images/img-88e4c4d7541a.svg" style="color: transparent;" width="624"/></div></figure>
+<p>You want the fastest route for this journey, so you aim to optimize the route. One option is to check every possible route to see which one takes the least amount of time to drive through, but this approach is quite time consuming.</p>
+<p>Instead, you decide to take the route with the shortest duration at each leg of the trip, understanding that it will result in the quickest journey:</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a weighted directed graph illustrating a network of nodes (A, B, C, D, E) connected by edges representing time durations.  Each node is labeled with a capital letter in orange.  The edges are depicted as lines; thicker black lines indicate the shortest path between nodes, while thinner light-grey lines represent alternative, longer paths.  Numerical values along the edges denote the time (in minutes) it takes to traverse that connection. For example, the shortest path from A to B takes 20 minutes, while an alternative path takes 30 minutes.  The shortest path from A to E is A-B-C-D-E, with individual leg times of 20, 15, 25, and 30 minutes respectively.  Other paths exist between nodes with varying durations, such as the 35-minute connection between B and E, or the 50-minute connection between C and D. The overall diagram visualizes different routes and their associated travel times between the five locations." data-nimg="1" height="223" src="images/img-9c829a25bf5b.svg" style="color: transparent;" width="624"/></div></figure>
+<p>This is effectively a greedy approach to the problem, where you choose the best option at each step, aiming to find the best solution overall.</p>
+<p><strong>How does a greedy algorithm work?</strong><br/>
+More formally, a greedy algorithm follows the <strong>greedy choice property</strong>, which states that the best overall solution to a problem (global optimum) can be arrived at by making the best possible decision at each step (local optimum).</p>
+<p>Each decision is made based only on the current context, and ignores its impact on future steps. This process continues until the algorithm reaches a final solution.</p>
+<p><strong>How to tell if a problem can be solved using a greedy approach</strong><br/>
+Greedy approaches are generally used for optimization problems, similar to DP. This means we check if the problem has an <strong>optimal substructure</strong> which can be broken down and solved by smaller subproblems.</p>
+<p>The key difference between DP and greedy approaches is their decision-making strategies. Greedy algorithms follow the greedy choice property, while DP considers all possible solutions to find the global optimum. It’s generally the case that all greedy problems can be solved using DP, <strong>but not all DP problems can be solved using a greedy approach</strong>.</p>
+<h2 id="real-world-example">Real-world Example</h2>
+<p><strong>Huffman coding in data compression:</strong> Huffman coding is an algorithm that assigns variable-length codes to input characters based on their frequencies, with the most frequent characters getting the shortest codes. The goal is to minimize the overall size of the encoded data. The greedy approach works by always combining the two least frequent characters first (local optimum), ensuring that each step reduces the size of the overall encoding (global optimum). This method is widely used in file compression formats like ZIP, and media compression standards like JPEG.</p>
+<h2 id="chapter-outline">Chapter Outline</h2>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a hierarchical diagram illustrating applications of the 'Greedy' coding pattern.  A rounded rectangle at the top, labeled 'Greedy,' acts as the root node.  From this node, two dashed lines descend, each pointing to a separate rounded rectangle representing a specific application. The left rectangle is labeled 'Reaching a Destination' and lists two sub-points: 'Jump to the End' and 'Gas Stations,' suggesting examples of problems solved using a greedy approach in this context. The right rectangle is labeled 'Resource Allocation' and lists 'Candies' as an example problem.  The overall structure shows that 'Reaching a Destination' and 'Resource Allocation' are both considered applications or examples of the broader 'Greedy' algorithmic pattern. The dashed lines indicate a hierarchical relationship, showing that the lower-level boxes are specific instances of the upper-level concept." data-nimg="1" height="164" src="images/img-8658dbba26c1.svg" style="color: transparent;" width="436"/></div></figure>
+<p>It’s impractical to provide a one-size-fits-all framework for solving greedy problems because each one is unique. Instead, this chapter explores a variety of unique situations in which a problem can be solved using the greedy choice property to provide a general understanding of how this property works.</p>
+<div class="nav-footer">
+  <span><a href="100-largest-square-in-a-matrix.html">Prev</a></span>
+  <span><a href="102-jump-to-the-end.html">Next</a></span>
+</div>
+</body>
+</html>

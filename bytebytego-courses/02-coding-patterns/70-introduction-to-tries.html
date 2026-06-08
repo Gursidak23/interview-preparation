@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction to Tries - Coding Interview Patterns</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.8; color: #1a1a1a;
+    max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem; background: #fff;
+  }
+  h1 { font-size: 2rem; margin: 1.5rem 0 1rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h2 { font-size: 1.6rem; margin: 1.8rem 0 0.8rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h3 { font-size: 1.3rem; margin: 1.5rem 0 0.6rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  h4, h5, h6 { margin: 1.2rem 0 0.5rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  p { margin: 0.8rem 0; }
+  img { max-width: 100%; height: auto; margin: 1rem 0; border-radius: 4px; }
+  pre { background: #f5f5f5; padding: 1rem; border-radius: 6px; overflow-x: auto; margin: 1rem 0; font-size: 0.9rem; }
+  code { background: #f0f0f0; padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  ul, ol { margin: 0.8rem 0; padding-left: 2rem; }
+  li { margin: 0.3rem 0; }
+  blockquote { border-left: 4px solid #10b981; padding: 0.5rem 1rem; margin: 1rem 0; background: #f0fdf4; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #ddd; padding: 0.5rem 0.75rem; text-align: left; }
+  th { background: #f5f5f5; font-weight: 600; }
+  hr { border: none; border-top: 1px solid #e5e5e5; margin: 2rem 0; }
+  .breadcrumb {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.85rem; color: #666; margin-bottom: 1.5rem;
+    padding-bottom: 1rem; border-bottom: 1px solid #e5e5e5;
+  }
+  .breadcrumb a { color: #10b981; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .nav-footer {
+    margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e5e5e5;
+    display: flex; justify-content: space-between;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.9rem;
+  }
+  .nav-footer a { color: #10b981; text-decoration: none; }
+  .nav-footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="breadcrumb">
+  <a href="../index.html">All Courses</a> &rsaquo; <a href="index.html">Coding Interview Patterns</a> &rsaquo; Introduction to Tries
+</div>
+<h2 id="intuition">Intuition</h2>
+<p>Tries, also known as prefix trees, are specialized tree-like data structures that efficiently store strings by taking advantage of shared prefixes.</p>
+<p>To understand how a trie works, consider the string "internet". We can store this string as a sequence of connected nodes, where each node represents a character in the string:</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a directed graph illustrating a sequence of data transformations or processing steps.  The graph consists of eight circular nodes, each containing a single lowercase letter: 'i', 'n', 't', 'e', 'r', 'n', 'e', and 't'.  These nodes are connected by directed edges (arrows) indicating the flow of data. The data flows unidirectionally from 'i' to 'n', then to 't', then to 'e', then to 'r', then back to 'n', then to 'e', and finally to 't'.  Each letter likely represents a stage in a process, with the arrows showing the order of execution or data transformation from one stage to the next.  The repetition of 'n' and 'e' suggests potential loops or iterative steps within the overall process. The 'i' likely represents the initial input, and 't' the final output." data-nimg="1" height="31" src="images/img-34d79087b1f9.svg" style="color: transparent;" width="550"/></div></figure>
+<p>Now, let's say we also want to store the word "interface". Instead of creating a separate sequence of nodes, we take advantage of their common prefix "inter". Both words can share the nodes for "inter", and the remainder of "interface" can branch out from the node 'r':</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a directed acyclic graph illustrating a sequence of data processing or workflow.  The graph consists of several circular nodes, each containing a single lowercase letter, representing stages or steps in the process.  Arrows indicate the direction of data flow between these stages. The sequence begins with node 'i' which flows into 'n', then 't', and finally 'e'.  From 'e', the flow diverges. One branch connects to node 'r', which then splits into two further branches. The upper branch leads to 'n', then 'e', and finally 't'. The lower branch from 'r' connects to 'f', then 'a', 'c', and finally 'e'.  Therefore, the graph shows two distinct parallel processing paths originating from 'r', both ultimately contributing to the final 'e' node, while the initial sequence 'i', 'n', 't', 'e' acts as a precursor to the branching point at 'r'." data-nimg="1" height="125" src="images/img-8ccba5bbaab8.svg" style="color: transparent;" width="624"/></div></figure>
+<p>This is, in essence, how a trie works: by allowing words to reuse existing nodes based on shared prefixes, it efficiently stores strings in a way that minimizes redundancy.</p>
+<p><strong>TrieNode</strong><br/>
+There are two attributes each <code>TrieNode</code> should have.</p>
+<p>1. Children: Each <code>TrieNode</code> has a data structure to store references to its child nodes. A <strong>hash map</strong> is typically used for this, with a character as the key and its corresponding child node as the value.</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a tree-like data structure visualization alongside a tabular representation of its children.  The left side shows a tree with a central, empty, circular node connected to three child nodes labeled 'a', 'b', and 'c' respectively, each depicted as a filled, orange-toned circle. An arrow points from a rectangular box labeled 'node' to the central node, suggesting that this box represents the parent node. The right side displays a table titled 'node.children,' with two columns: 'char' listing characters 'a', 'b', and 'c', and 'child node' visually mirroring the child nodes from the tree diagram, using the same orange-toned circles containing the corresponding characters.  The table illustrates the relationship between the parent node and its children, showing that the parent node's children are represented by the characters 'a', 'b', and 'c', each associated with a corresponding child node." data-nimg="1" height="142" src="images/img-f2277da57215.svg" style="color: transparent;" width="325"/></div></figure>
+<p>Sometimes, an array is used instead of a hash map if the possible characters of words in the trie are limited and known in advance. For example, if they only contain lowercase English letters, an array of size 26 can be used, instead.</p>
+<p>2. End of word indicator: Each <code>TrieNode</code> needs an attribute to indicate whether it marks the end of a word. This can be done in two ways:</p>
+<ul>
+<li>A boolean attribute (<code>is_word</code>) to confirm if the node is the end of a word.</li>
+<li>A string variable (<code>word</code>) that stores the word itself at the node. This is usually used if we also want to know the specific word that ends at this node.</li>
+</ul>
+<p><strong>Trie structure</strong><br/>
+This is an example of a trie that’s been populated by inserting the words "internet", "interface", "byte", "bytes", "dog", and "dig". Every word represented by the trie branches out of a <strong>root <code>TrieNode</code></strong>, which does not represent any character.</p>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a Trie data structure, a tree-like data structure used for storing a dynamic set of strings.  The topmost node is labeled 'root,' and from it branch three main paths. Each path consists of nodes, each node containing a single character.  The paths represent different strings.  For example, one path spells 'inter,' another 'bytes,' and a third contains 'dog' and 'dig.' Dashed lines connect certain leaf nodes (terminal nodes) to labels indicating 'is_word = True,' signifying that the string formed by the path to that node is a valid word in the Trie's vocabulary.  The arrangement shows how the Trie efficiently stores and searches for words by sharing prefixes.  The characters in the nodes are arranged sequentially along each path to form words, and the 'is_word' label indicates whether the word represented by the path is present in the dataset." data-nimg="1" height="489" src="images/img-3d3747a36c58.svg" style="color: transparent;" width="527"/></div></figure>
+<p>Below is the time complexity breakdown for trie operations involving a word of length <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 0.6944em;"></span><span class="mord mathnormal" style="margin-right: 0.03148em;">k</span></span></span></span>:</p>
+<div class="table-wrap" style="--table-min-width: 640px;"><table><thead><tr><th style="text-align: left;">Operation</th><th style="text-align: center;">Complexity</th><th style="text-align: left;">Description</th></tr></thead><tbody><tr><td style="text-align: left;">Insert</td><td style="text-align: center;"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>k</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(k)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right: 0.03148em;">k</span><span class="mclose">)</span></span></span></span></td><td style="text-align: left;">Insert a word into the trie.</td></tr><tr><td style="text-align: left;">Search</td><td style="text-align: center;"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>k</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(k)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right: 0.03148em;">k</span><span class="mclose">)</span></span></span></span></td><td style="text-align: left;">Search for a word in the trie.</td></tr><tr><td style="text-align: left;">Search prefix</td><td style="text-align: center;"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>k</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(k)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right: 0.03148em;">k</span><span class="mclose">)</span></span></span></span></td><td style="text-align: left;">Check if any word in the trie starts with a given prefix.</td></tr><tr><td style="text-align: left;">Delete</td><td style="text-align: center;"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>k</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(k)</annotation></semantics></math></span><span aria-hidden="true" class="katex-html"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right: 0.03148em;">k</span><span class="mclose">)</span></span></span></span></td><td style="text-align: left;">Delete a word from the trie</td></tr></tbody></table></div>
+<p> </p>
+<p>The implementation details of most of these functions are discussed in detail in the <em>Design a Trie</em> problem.</p>
+<p><strong>When to use tries</strong><br/>
+The primary use of a trie is to handle efficient prefix searches. If an interview problem asks you to find all strings that share a common prefix, a trie is likely the ideal data structure. Tries are also useful for word validation, allowing us to quickly verify the existence of words within a set of strings. They also help optimize data storage by reducing redundancy through shared prefixes among strings.</p>
+<h2 id="real-world-example">Real-world Example</h2>
+<p><strong>Autocomplete:</strong> When you start typing a word, some systems use a trie to quickly suggest possible completions. Each node in the trie represents a character, and as you type, the system traverses the trie based on the input characters. This allows the system to efficiently retrieve all possible words or phrases that start with the entered prefix, enabling fast autocomplete suggestions.</p>
+<h2 id="chapter-outline">Chapter Outline</h2>
+<figure class="py-1"><div style="display: flex; justify-content: center;"><img alt="Image represents a hierarchical diagram illustrating the concept of Tries in coding patterns.  At the top, a rounded rectangle labeled 'Tries' acts as the parent node.  From this node, two dashed lines descend, each pointing to a separate child node represented by rounded rectangles with a light gray fill. The left child node is labeled 'Implementation' and contains two bullet points: 'Design a Trie' and 'Insert and Search Words with Wildcards'. The right child node is labeled 'Traversal' and contains a single bullet point: 'Find All Words on a Board'.  The diagram visually depicts that the concept of Tries branches into two main aspects:  the implementation details (designing and using a Trie data structure for insertion and search, including handling wildcards) and the traversal aspect (specifically, using Tries to find all words on a board, suggesting a word search application)." data-nimg="1" height="174" src="images/img-daf3f09aa447.svg" style="color: transparent;" width="600"/></div></figure>
+<div class="nav-footer">
+  <span><a href="69-serialize-and-deserialize-a-binary-tree.html">Prev</a></span>
+  <span><a href="71-design-a-trie.html">Next</a></span>
+</div>
+</body>
+</html>
